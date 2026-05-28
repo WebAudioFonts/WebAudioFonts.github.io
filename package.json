@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "chokibasic": "^1.2.3",
+    "highlight.js": "^11.11.1"
+  }
+}

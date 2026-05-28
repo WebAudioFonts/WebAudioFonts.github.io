@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="icon" type="image/png" href="./images/favicon.png">
+	<!-- <link rel="stylesheet" href="./styles/hopscotch.min.css"> -->
+	<link rel="stylesheet" href="./styles/waf.core.min.css">
+	<!-- <script src="./scripts/highlight.min.js"></script> -->
+	<script src="./scripts/waf.core.min.js"></script>
+	<title>WebAudioFont | A complete open-source stack for MIDI audio playback in the browser</title>
+</head>
+<body>
+	<header>
+		<h1>WebAudioFonts</h1>
+	</header>
+	<main>
+		<section>
+			<h2>WebAudioFonts</h2>
+			<p><em>A complete open-source stack for MIDI audio playback in the browser.</em></p>
+			<p>WebAudioFonts is a collection of three focused projects that work together to bring high-quality, instrument-rich MIDI playback to any web application — with no plugins, no server-side audio processing, and no heavy runtime dependencies.</p>
+		</section>
+
+
+		<section>
+			<h2>The Stack</h2>
+			<pre class="shema">
+
+┌─────────────────────────────────────────────────┐
+│                Your Application                 │
+├─────────────────────────────────────────────────┤
+│        midi-audio-player (Playback engine)      │
+├────────────────────────┬────────────────────────┤
+│   webaudiofontplayer   │  sf2-json (Preset CDN) │
+├────────────────────────┴────────────────────────┤
+│                  Web Audio API                  │
+└─────────────────────────────────────────────────┘
+			</pre>
+			<br>
+			<table>
+				<thead>
+					<tr>
+						<th>Project</th>
+						<th>Role</th>
+						<th>Package</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><a href="#midi-audio-player">midi-audio-player</a></td>
+						<td>High-level MIDI player with full API, EQ, reverb, karaoke, and event system</td>
+						<td><span class="incode">npm install midi-audio-player</span></td>
+					</tr>
+					<tr>
+						<td><a href="#webaudiofontplayer">webaudiofontplayer</a></td>
+						<td>Low-level Web Audio engine — schedules notes, handles controllers and pitch bend</td>
+						<td><span class="incode">npm install webaudiofontplayer</span></td>
+					</tr>
+					<tr>
+						<td><a href="#sf2-json">sf2-json</a></td>
+						<td>SoundFont-to-JSON pipeline and preset CDN — converts .sf2 banks into streamable preset files</td>
+						<td><span class="incode">npm install sf2-json</span> — Self-hosted</td>
+					</tr>
+				</tbody>
+			</table>
+		</section>
+
+		<section>
+			<h2 id="midi-audio-player">midi-audio-player</h2>
+			<p><em>The main entry point for most use cases.</em></p>
+			<p>A full-featured MIDI playback engine. Load a .mid or .kar file from a URL, ArrayBuffer, or Base64 string, and play it with a rich Web Audio signal chain — all in a few lines of code.</p>
+			<h3>Highlights:</h3>
+			<ul>
+				<li>Automatic instrument preset resolution and streaming</li>
+				<li>10-band parametric EQ with named presets</li>
+				<li>Convolution reverb</li>
+				<li>Per-channel volume control</li>
+				<li>Karaoke mode with timed HTML lyric frames and vocal channel muting</li>
+				<li>Auto-repair of corrupted MIDI files and silence trimming</li>
+				<li>SVG waveform generation and real-time amplitude metering</li>
+				<li>Full MIDI protocol support (pitch bend, controllers, program change)</li>
+				<li>IndexedDB preset cache — presets are only downloaded once</li>
+				<li>ESM-native, works with any bundler or vanilla browser environment</li>
+			</ul>
+			<h3>Basic Example</h3>
+			<pre><code class="language-javascript">
+				import MidiAudioPlayer from 'midi-audio-player';
+
+				const player = new MidiAudioPlayer({
+				  volume: 0.8,
+				  reverb: 0.2,
+				  eqPreset: 'jazz'
+				});
+
+				player.on('computed', ({ title, duration }) => {
+				  console.log(`${title} — ${duration.toFixed(1)}s`)
+				});
+				player.on('endOfFile', () => this.playNextSong());
+
+				await player.play('https://example.com/song.mid');
+			</code></pre>
+		
+		
+		</section>
+
+
+
+
+
+
+
+
+
+
+
+		<section>
+			<h2>Features</h2>
+			<ul>
+				<li>MIDI file playback in modern browsers</li>
+				<li>Built on the Web Audio API</li>
+				<li>Uses WebAudioFont for preset rendering</li>
+				<li>Lightweight and dependency-minimal</li>
+				<li>Simple programmatic API</li>
+				<li>CLI tool for preset/font handling</li>
+			</ul>
+		</section>
+
+		<section>
+			<h2>Installation</h2>
+			<pre><code class="language-shell">npm install midi-audio-player</code></pre>
+		</section>
+
+		<section>
+			<h2>Usage</h2>
+
+			<h3>Basic Example</h3>
+			<pre><code class="language-javascript">
+				import MidiAudioPlayer from &#39;midi-audio-player&#39;;
+
+				const response = await fetch(&#39;/examples/data/iwillsurvive.mid&#39;);
+				const buffer = await response.arrayBuffer();
+
+				const player = new MidiAudioPlayer({
+				  preset: presetData,
+				  volume: 0.6,
+				  onEndFile: async () =&gt; await this.playNextSong()
+				});
+
+				player.play(buffer);
+			</code></pre>
+			<br>
+
+			<h3>Control Playback</h3>
+			<pre><code class="language-javascript">
+				player.play();
+				player.pause();
+				player.stop();
+			</code></pre>
+			<br>
+
+			<h3>Working with AudioContext</h3>
+			<p>Due to browser autoplay restrictions, you should ensure that your AudioContext is resumed after a user interaction.</p>
+		</section>
+
+		<section>
+			<h2>CLI</h2>
+			<p>This package provides a CLI tool for downloading and converting WebAudioFont assets. You need to provide a WebAudioFont ID and the json file for the destination.</p>
+			<pre><code class="language-shell">webaudiofont "0000_Chaos_sf2_file" "dest/preset.json"</code></pre>
+			<p>You can find presets here: <a noreferrer noopener target="_blank" href="https://github.com/surikov/webaudiofont#catalog-of-instruments">Srgy Surkv's WebAudioFonts</a></p>
+		</section>
+
+		<section>
+			<h2>Browser Compatibility</h2>
+			<p>Requires a modern browser with support for:</p>
+			<ul>
+				<li>Depends on WebAudioFont instrument quality and availability</li>
+				<li>Not intended for high-fidelity or professional audio rendering</li>
+				<li>First playback may be delayed if the AudioContext is not initialized properly</li>
+			</ul>
+		</section>
+
+		<section>
+			<h2>License</h2>
+			<p><a noreferrer noopener target="_blank" href="https://github.com/ZmotriN/midi-audio-player/blob/main/LICENSE">MIT LICENSE</a></p>
+		</section>
+
+		<section>
+			<h2>Author</h2>
+			<p><a noreferrer noopener target="_blank"  href="https://github.com/ZmotriN">Maxime Larrivée-Roy</a></p>
+		</section>
+
+		<section>
+			<h2>Repository</h2>
+			<p><a noreferrer noopener target="_blank"  href="https://github.com/ZmotriN/midi-audio-player">https://github.com/ZmotriN/midi-audio-player</a></p>
+		</section>
+
+		<section id="changelog"></section>
+
+		<hr>
+
+		<section>
+			<h2>Examples</h2>
+
+			<h3>Basic example</h3>
+			<!-- <iframe style="width: 100%; height: 15rem" scrolling="no" title="MidiAudioPlayer | Example 1" src="https://codepen.io/editor/ZmotriN/embed/019e0c43-2320-7a2c-bcbd-f48628c376cf?default-tab=js%2Cresult&theme-id=-2" frameborder="no" loading="lazy" allowtransparency="true"></iframe> -->
+		</section>
+
+		<hr>
+
+		<section>
+			<h2>Documentation</h2>
+		</section>
+	</main>
+
+
+	<script type="module">
+		// (async () => {
+		// 	document.querySelectorAll('code').forEach(elm => elm.textContent = elm.textContent.trim().split("\n").map(row => row.replace(/^\t+/gm, "")).join("\n"));
+		// 	hljs.highlightAll();
+		// 	const response = await fetch('https://raw.githubusercontent.com/ZmotriN/midi-audio-player/refs/heads/main/CHANGELOG.md');
+		// 	const changelog = await marked.parse(await response.text());
+		// 	document.getElementById('changelog').innerHTML = changelog;
+		// })();
+	</script>
+</body>
+</html>
