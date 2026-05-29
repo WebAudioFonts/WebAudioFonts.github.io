@@ -2,9 +2,11 @@ import './libraries/helpers';
 import DEMO from './includes/demo';
 import hljs from 'highlight.js/lib/core';
 import javascript from 'highlight.js/lib/languages/javascript';
-import shell from 'highlight.js/lib/languages/shell';
+import bash from 'highlight.js/lib/languages/bash';
+import css from 'highlight.js/lib/languages/css';
 hljs.registerLanguage('javascript', javascript);
-hljs.registerLanguage('shell', shell);
+hljs.registerLanguage('bash', bash);
+hljs.registerLanguage('css', css);
 
 
 ({

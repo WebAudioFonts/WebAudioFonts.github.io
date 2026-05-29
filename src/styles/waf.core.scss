@@ -208,10 +208,10 @@ p:not(:first-child) {
 }
 
 
-ul {
+ul, ol {
 	padding-left: 0;
 	list-style-position: outside;
-	margin-left: 1rem;
+	margin-left: 2rem;
 }
 
 li:not(:first-child) {
@@ -266,12 +266,17 @@ pre.shema {
 	user-select: none;
 }	
 
+pre:has(code.hljs) {
+	margin-bottom: 1rem;
+}
+
 pre code.hljs, .logs {
 	font-size: 0.7rem;
 	font-family: var(--font-monospace);
 	overflow-x: auto;
 	scrollbar-width: thin;
 	scrollbar-color: var(--color-hljs2) var(--color-hljs3);
+	line-height: 1rem;
 
 	&::-webkit-scrollbar {
 			// border-radius: 0.2rem;
@@ -299,11 +304,16 @@ section {
 }
 
 table {
+	width: 100%;
+	// border-collapse: separate;
+	border-spacing: 0 0rem;
+	padding-bottom: 1rem;
 	th {
 		font-weight: 500;
 		text-align: left;
 		border-bottom: 0.15rem solid var(--color-third);
-		padding-bottom: 0.2rem;
+		// padding-bottom: 0.2rem;
+		padding: 1rem 0.4rem 0.2rem 0;
 	}
 
 	// tr:first-child td {
@@ -317,10 +327,9 @@ table {
 
 	td {
 		vertical-align: top;
-		padding-right: 0.4rem;
-		padding-top: 0.25rem;
-		padding-bottom: 0.25rem;
-		border-bottom: 0.1rem solid var(--color-third);
+		padding: 1rem 0.4rem 1rem 0;
+		border-bottom: 0.05rem solid var(--color-third);
+		
 	}
 
 

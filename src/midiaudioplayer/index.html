@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en_CA" data-page="index">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta name="description" content="WebAudioFont | A complete open-source stack for MIDI audio playback in the browser" />
+	<meta name="keywords" content="webaudiofonts, midi, midi-player, webaudio, webaudiofont, audio, music, browser-audio, midi-js, web-audio-api, midi-playback" />
+	<meta name="robots" content="index, follow" />
+	<meta name="language" content="en-CA" />
+	<meta property="og:locale" content="en_CA">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="WebAudioFonts">
+    <meta property="og:description" content="WebAudioFonts | MidiAudioPlayer Documentation">
+    <meta property="og:url" content="https://webaudiofonts.com/midiaudioplayer/">
+    <meta property="og:image" content="https://webaudiofonts.com/images/ogimage.webp">
+	<meta property="og:image:alt" content="Logo WebAudioFonts">
+	<link rel="icon" type="image/png" href="/images/favicon.png">
+	<link rel="canonical" href="https://webaudiofonts.com/midiaudioplayer/">
+	<link rel="stylesheet" href="/styles/waf.core.min.css?###TIMESTAMP###">
+	<script src="/scripts/waf.core.min.js?###TIMESTAMP###"></script>
+	<title>WebAudioFonts | MidiAudioPlayer Documentation</title>
+</head>
+<body>
+	<header>
+		<a href="/"><h1>WebAudioFonts</h1></a>
+	</header>
+	<main>
+		<section>
+			<h2>MidiAudioPlayer</h2>
+			<p><em>Real MIDI playback in the browser — powered by Web Audio API and WebAudioFont.</em></p>
+			<p>No server. No heavy runtime. Just load a <span class="incode">.mid</span> or <span class="incode">.kar</span> file and play it — with reverb, a 10-band EQ, per-channel volume control, karaoke support, and over 3,000 instrument presets.</p>
+			<pre><code class="language-javascript">
+				const player = new MidiAudioPlayer({
+				  volume: 0.8,
+				  reverb: 0.2,
+				  eqPreset: 'jazz'
+				});
+				player.on('endOfFile', () => playAnotherSong());
+				await player.play('https://example.com/song.mid');
+			</code></pre>
+		</section><br>
+
+
+		<section>
+			<h2>Features</h2>
+			<ul>
+				<li>Full General MIDI playback via WebAudioFont instrument presets</li>
+				<li>3,000+ free instrument presets — piano, strings, brass, synths, drums, and more</li>
+				<li>Convolution reverb with adjustable wet/dry mix</li>
+				<li>10-band parametric EQ with named presets</li>
+				<li>Per-channel volume control</li>
+				<li>Karaoke mode — parses MIDI text/lyric events and emits timed HTML frames</li>
+				<li>Vocal channel auto-detection and muting</li>
+				<li>Auto-repair for corrupted MIDI files</li>
+				<li>Leading/trailing silence trimming</li>
+				<li>SVG waveform generation</li>
+				<li>Real-time amplitude metering</li>
+				<li>Full MIDI protocol support (pitch bend, controllers, program change, etc.)</li>
+				<li>Works with URLs, <span class="incode">ArrayBuffer</span>, and Base64 input</li>
+				<li>IndexedDB preset cache — presets are only downloaded once</li>
+				<li>Bring your own preset endpoint (self-hosted sf2-json deployment)</li>
+				<li>ESM-native, compatible with bundlers and vanilla browser environments</li>
+			</ul>
+		</section><br>
+
+		<section>
+			<h2>Installation</h2>
+			<pre><code class="language-bash">
+				npm install midi-audio-player
+			</code></pre>
+			<p>Or via CDN (UMD):</p>
+			<pre><code class="language-bash">
+				https://cdn.jsdelivr.net/npm/midi-audio-player/dist/midi-audio-player.min.js
+			</code></pre>
+		</section><br>
+
+		<section>
+			<h2>Quick Start</h2>
+			<pre><code class="language-javascript">
+				import MidiAudioPlayer from 'midi-audio-player';
+
+				const player = new MidiAudioPlayer({
+				  volume: 0.7,
+				  reverb: 0.25,
+				});
+
+				player.on('computed', ({ title, duration }) => {
+				  console.log(`"${title}" — ${duration.toFixed(1)}s`);
+				});
+
+				player.on('presetsLoaded', () => {
+				  console.log('All instruments ready.');
+				});
+
+				player.on('endOfFile', () => player.stop());
+
+				await player.play('https://example.com/song.mid');
+			</code></pre>
+			<p><em><strong>Note:</strong> <span class="incode">MidiAudioPlayer</span> must be instantiated in response to a user gesture (click, keydown, etc.), as browsers require user activation before creating a Web Audio context.</em></p>
+		</section><br>
+
+
+		<section>
+			<h2>API Reference</h2>
+			<h3><span class="incode">new MidiAudioPlayer(opts?)</span></h3><br>
+			<p>Creates a new player instance and initializes the full Web Audio signal chain.</p>
+			<table>
+				<thead>
+					<tr>
+						<th>Option</th>
+						<th>Type</th>
+						<th>Default</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><span class="incode">endpoint</span></td>
+						<td><span class="incode">string</span></td>
+						<td><span class="incode">"https://webaudiofonts<br>.com/presets/"</span></td>
+						<td>Base URL of the preset endpoint. Must expose catalog.json and individual preset JSON files.</td>
+					</tr>
+					<tr>
+						<td><span class="incode">volume</span></td>
+						<td><span class="incode">number</span></td>
+						<td><span class="incode">0.6</span></td>
+						<td>Master output volume <span class="incode">[0, 1]</span>. Applied with a logarithmic curve.</td>
+					</tr>
+					<tr>
+						<td><span class="incode">reverb</span></td>
+						<td><span class="incode">number</span></td>
+						<td><span class="incode">0.3</span></td>
+						<td>Convolution reverb wet level <span class="incode">[0, 1]</span>. <span class="incode">0</span> = dry, <span class="incode">1</span> = full wet.</td>
+					</tr>
+					<tr>
+						<td><span class="incode">localCache</span></td>
+						<td><span class="incode">boolean</span></td>
+						<td><span class="incode">true</span></td>
+						<td>Cache the catalog in <span class="incode">sessionStorage</span> and presets in <span class="incode">IndexedDB</span>.</td>
+					</tr>
+					<tr>
+						<td><span class="incode">presetRandom</span></td>
+						<td><span class="incode">boolean</span></td>
+						<td><span class="incode">false</span></td>
+						<td>Pick a random preset for each MIDI program instead of the first available.</td>
+					</tr>
+					<tr>
+						<td><span class="incode">karaoke</span></td>
+						<td><span class="incode">boolean</span></td>
+						<td><span class="incode">false</span></td>
+						<td>Enable karaoke mode. Parses MIDI lyric events and emits timed HTML frames.</td>
+					</tr>
+					<tr>
+						<td><span class="incode">karaokeDelay</span></td>
+						<td><span class="incode">number</span></td>
+						<td><span class="incode">0</span></td>
+						<td>Advance karaoke frames by this many seconds (lyrics appear earlier).</td>
+					</tr>
+					<tr>
+						<td><span class="incode">muteExpression</span></td>
+						<td><span class="incode">boolean</span></td>
+						<td><span class="incode">false</span></td>
+						<td>Auto-detect and mute the vocal channel. Requires <span class="incode">karaoke: true</span>.</td>
+					</tr>
+					<tr>
+						<td><span class="incode">maxCharPerLine</span></td>
+						<td><span class="incode">number</span></td>
+						<td><span class="incode">48</span></td>
+						<td>Max characters per karaoke line before forcing a line break.</td>
+					</tr>
+					<tr>
+						<td><span class="incode">eqPreset</span></td>
+						<td><span class="incode">EQPresetName</span></td>
+						<td><span class="incode">"flat"</span></td>
+						<td>EQ preset applied on instantiation.</td>
+					</tr>
+					<tr>
+						<td><span class="incode">preferred</span></td>
+						<td><span class="incode">string[]</span></td>
+						<td><span class="incode">[]</span></td>
+						<td>Ordered list of preferred sound bank suffixes (e.g. <span class="incode">["FluidR3_GM"]</span>).</td>
+					</tr>
+					<tr>
+						<td><span class="incode">presets</span></td>
+						<td><span class="incode">string[]</span></td>
+						<td><span class="incode">[]</span></td>
+						<td>Preset IDs to pre-register in the program map, overriding auto-selection.</td>
+					</tr>
+				</tbody>
+			</table>
+			<br><br>
+			<h3>Getters / Setters</h3><br>
+			<table>
+				<thead>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><span class="incode">volume</span></td>
+						<td style="white-space: nowrap;"><span class="incode">number</span> (get/set)</td>
+						<td>Master output volume <span class="incode">[0, 1]</span>.</td>
+					</tr>
+					<tr>
+						<td><span class="incode">reverb</span></td>
+						<td><span class="incode">number</span> (get/set)</td>
+						<td>Reverb wet mix <span class="incode">[0, 1]</span>.</td>
+					</tr>
+					<tr>
+						<td><span class="incode">muteExpression</span></td>
+						<td style="white-space: nowrap;"><span class="incode">boolean</span> (get/set)</td>
+						<td>Enable/disable vocal channel muting.</td>
+					</tr>
+					<tr>
+						<td><span class="incode">eq</span></td>
+						<td><span class="incode">EQGains</span> (get)</td>
+						<td>Current EQ band gains as a frequency → dB map.</td>
+					</tr>
+					<tr>
+						<td><span class="incode">eqFrequencies</span></td>
+						<td><span class="incode">number[]</span> (get)</td>
+						<td>The 10 fixed EQ frequencies: <span class="incode">[32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384]</span>.</td>
+					</tr>
+					<tr>
+						<td><span class="incode">channels</span></td>
+						<td><span class="incode">Record&lt;string, object&gt;</span> (get)</td>
+						<td>Active <span class="incode">WebAudioFontPlayer</span> instances, keyed by MIDI channel number.</td>
+					</tr>
+					<tr>
+						<td><span class="incode">channelStates</span></td>
+						<td><span class="incode">Record&lt;string, object&gt;</span> (get)</td>
+						<td>Snapshot of which channels are currently playing notes.</td>
+					</tr>
+					<tr>
+						<td><span class="incode">catalog</span></td>
+						<td><span class="incode">Promise&lt;Catalog&gt;</span> (get)</td>
+						<td>Resolves the full preset catalog. Equivalent to <span class="incode">getCatalog()</span>.</td>
+					</tr>
+				</tbody>
+			</table>
+			<br><br>
+			<h3>EQ</h3><br>
+			<h4><span class="incode">getEQ() → EQGains</span></h4>
+			<p>Returns the current gain (in dB) for all 10 EQ bands.</p>
+			<pre><code class="language-javascript">
+				const gains = player.getEQ();
+				console.log(gains[32]); // e.g. 6
+			</code></pre>
+			<br><br>
+			<h4><span class="incode">setEQ(gains: EQGains) → void</span></h4>
+			<p>Updates one or more EQ bands. Unspecified bands are unchanged.</p>
+			<pre><code class="language-javascript">
+				player.setEQ({ 32: 6, 64: 4, 1024: -2 });
+			</code></pre>
+			<br><br>
+			<h4><span class="incode">setEQPreset(name: EQPresetName) → void</span></h4>
+			<p>Applies a named EQ preset across all 10 bands.</p>
+			<p>Available presets: <span class="incode">flat</span>, <span class="incode">bass</span>, <span class="incode">treble</span>, <span class="incode">vocal</span>, <span class="incode">loudness</span>, <span class="incode">classical</span>, <span class="incode">jazz</span>, <span class="incode">electronic</span>.</p>
+			<pre><code class="language-javascript">
+				player.setEQPreset('classical');
+			</code></pre>
+			<br><br>
+			<h4><span class="incode">setChannelVolume(channel: number, volume: number) → void</span></h4>
+			<p>Overrides the volume multiplier for a specific MIDI channel. Takes effect immediately.</p>
+			<pre><code class="language-javascript">
+				player.setChannelVolume(10, 0);    // Mute drums
+				player.setChannelVolume(1, 0.5);   // Half volume on channel 1
+			</code></pre>
+			<br><br>
+			<h3>Preset Catalog</h3><br>
+			<h4><span class="incode">getCatalog() → Promise&lt;Catalog&gt;</span></h4>
+			<p>Downloads and returns the full WebAudioFont preset catalog. Cached in <span class="incode">sessionStorage</span> after the first fetch.</p>
+			<pre><code class="language-javascript">
+				const catalog = await player.getCatalog();
+				console.log(catalog.categories.length);
+			</code></pre>
+			<br><br>
+			<h4><span class="incode">getCategories() → Promise&lt;CatalogCategory[]&gt;</span></h4>
+			<p>Returns all top-level instrument categories from the catalog.</p>
+			<pre><code class="language-javascript">
+				const categories = await player.getCategories();
+				categories.forEach(c => console.log(c.name));
+			</code></pre>
+			<br><br>
+			<h4><span class="incode">findPreset(id: string) → Promise&lt;PresetInfo | null&gt;</span></h4>
+			<p>Finds a preset by its string ID and returns its full metadata, including <span class="incode">category</span>, <span class="incode">instrument</span>, and <span class="incode">program</span>.</p>
+			<pre><code class="language-javascript">
+				const info = await player.findPreset('0000_FluidR3');
+				// { id: '0000_...', category: 'Piano', instrument: 'Acoustic Grand Piano', program: 1 }
+			</code></pre>
+			<br><br>
+			<h4><span class="incode">loadPreset(presetId: string, channel: number) → Promise&lt;void&gt;</span></h4>
+			<p>Replaces the instrument on a specific MIDI channel at runtime.</p>
+			<pre><code class="language-javascript">
+				await player.loadPreset('0000_Steinway', 1);
+			</code></pre>
+			<br><br>
+			<h3>Song Loading</h3><br>
+			<h4><span class="incode">load(content, setup?) → Promise&lt;void&gt;</span></h4>
+			<p>Loads a MIDI file and prepares the audio engine for playback.</p>
+			<p><span class="incode">content</span> accepts:</p>
+			<ul>
+				<li>A URL string — fetched automatically</li>
+				<li>An <span class="incode">ArrayBuffer</span> — e.g. from a <span class="incode">&lt;input type=&quot;file&quot;&gt;</span></li>
+				<li>A Base64-encoded MIDI string</li>
+			</ul>
+			<p><span class="incode">setup</span> (optional) accepts a <span class="incode">SongSetup</span> object or a URL to a JSON file, to restore previously saved preset/volume overrides.</p>
+			<p>The loading sequence is:</p>
+			<ol>
+				<li>Stop current playback and clear note registry</li>
+				<li>Parse and repair the MIDI buffer if necessary</li>
+				<li>Resolve and download all required instrument presets</li>
+				<li>Trim leading and trailing silence</li>
+				<li>Generate karaoke frames (if enabled)</li>
+				<li>Emit <span class="incode">computed</span> early, then <span class="incode">presetsLoaded</span> when audio is fully ready</li>
+			</ol>
+			<br>
+			<pre><code class="language-javascript">
+				// From URL
+				await player.load('https://example.com/song.mid');
+
+				// From file input
+				const buffer = await file.arrayBuffer();
+				await player.load(buffer);
+
+				// With a saved setup
+				await player.load('song.mid', savedSetup);
+			</code></pre>
+			<br><br>
+			<h4><span class="incode">getSongSetup() → Promise&lt;SongSetup&gt;</span></h4>
+			<p>Returns a serializable snapshot of the current channel configuration (active preset IDs + per-channel volumes). Save and pass back to <span class="incode">load()</span> to reproduce the same instrument mapping.</p>
+			<pre><code class="language-javascript">
+				const setup = await player.getSongSetup();
+				localStorage.setItem('setup', JSON.stringify(setup));
+
+				// Later:
+				await player.load('song.mid', JSON.parse(localStorage.getItem('setup')));
+			</code></pre>
+			<br><br>
+			<h4><span class="incode">getTrainingPresets() → Promise&lt;string[]&gt;</span></h4>
+			<p>Returns the preset IDs currently registered in the internal program-to-preset override map.</p>
+			<br><br>
+			<h3>Playback Control</h3><br>
+			<h4><span class="incode">play(content?) → Promise&lt;boolean&gt;</span></h4>
+			<p>Starts or resumes playback. If <span class="incode">content</span> is provided, loads it first.</p>
+			<p>Returns <span class="incode">true</span> on success, <span class="incode">false</span> if the Web Audio context could not be resumed (browser autoplay restriction).</p>
+			<pre><code class="language-javascript">
+				await player.play();                                  // Resume
+				await player.play('https://example.com/song.mid');    // Load and play
+			</code></pre>
+			<br><br>
+			<h4><span class="incode">pause() → Promise&lt;void&gt;</span></h4>
+			<p>Pauses at the current position. Kills the reverb tail. Resume with <span class="incode">play()</span>.</p>
+			<br><br>
+			<h4><span class="incode">stop() → Promise&lt;MidiAudioPlayer&gt;</span></h4>
+			<p>Stops playback and resets to the beginning. Returns the player instance for chaining.</p>
+			<br><br>
+			<h4><span class="incode">skipToSeconds(seconds: number) → Promise&lt;MidiAudioPlayer&gt;</span></h4>
+			<p>Seeks to the specified position in seconds. Works during playback and while paused. Resumes playback automatically if it was active.</p>
+			<pre><code class="language-javascript">
+				await player.skipToSeconds(45.0);
+			</code></pre>
+			<br><br>
+			<h3>Metering & Visualization</h3><br>
+			<h4><span class="incode">getRealTimeVolume() → number</span></h4>
+			<p>Returns the current normalized output amplitude <span class="incode">[0, 1]</span>, computed from the <span class="incode">AnalyserNode</span>. Useful for driving VU meters or visualizers in a <span class="incode">requestAnimationFrame</span> loop.</p>
+			<pre><code class="language-javascript">
+				function tick() {
+				  meter.style.width = `${player.getRealTimeVolume() * 100}%`;
+				  requestAnimationFrame(tick);
+				}
+				tick();
+			</code></pre>
+			<br><br>
+			<h4><span class="incode">getSongTimeRemaining() → number</span></h4>
+			<p>Returns the remaining playback time in seconds.</p>
+			<br><br>
+			<h4><span class="incode">generateWaveformSVG(samples?) → Promise&lt;string&gt;</span></h4>
+			<p>Generates an SVG waveform for the currently loaded song, based on note velocities and expression/volume controller events.</p>
+			<p>The returned <span class="incode">&lt;svg&gt;</span> element has the class <span class="incode">midiaudioplayer-waveform</span>. Its <span class="incode">&lt;path&gt;</span> carries no default stroke or fill — apply via CSS.</p>
+			<pre><code class="language-javascript">
+				const svg = await player.generateWaveformSVG(800);
+				document.getElementById('waveform').innerHTML = svg;
+			</code></pre>
+			<pre><code class="language-css">
+				.midiaudioplayer-waveform path {
+				  stroke: #6ee7b7;
+				  stroke-width: 1.5;
+				  fill: rgba(110, 231, 183, 0.15);
+				}
+			</code></pre>
+			<table>
+				<thead>
+					<tr>
+						<th>Parameter</th>
+						<th>Type</th>
+						<th>Default</th>
+						<th style="width: 50%">Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><span class="incode">samples</span></td>
+						<td><span class="incode">number</span></td>
+						<td><span class="incode">1000</span></td>
+						<td>Number of horizontal data points. Higher = finer detail.</td>
+					</tr>
+				</tbody>
+			</table>
+			<br><br>
+			<h3>Lifecycle</h3><br>
+			<h4><span class="incode">close() → Promise&lt;void&gt;</span></h4>
+			<p>Closes all channel players and the Web Audio context, releasing hardware resources. The instance cannot be reused after this call.</p>
+			<br><br>
+			<h3>Events — <span class="incode">player.on(event, handler)</span></h3><br>
+			<h4><span class="incode">logs</span></h4>
+			<p>Emitted throughout the loading and playback lifecycle with internal status messages.</p>
+			<pre><code class="language-javascript">
+				player.on('logs', (message) => console.log('[midi]', message));
+			</code></pre>
+			<br><br>
+			<h4><span class="incode">computed</span></h4>
+			<p>Emitted after MIDI parsing completes, before presets finish downloading. Use this to update your UI with song metadata immediately.</p>
+			<pre><code class="language-javascript">
+				player.on('computed', ({ title, duration, channels, karaoke }) => {
+				  titleEl.textContent = title || 'Untitled';
+				  durationEl.textContent = `${duration.toFixed(1)}s`;
+				});
+			</code></pre><br>
+			<p>Payload:</p>
+			<table>
+				<thead>
+					<tr>
+						<th>Field</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><span class="incode">title</span></td>
+						<td><span class="incode">string</span></td>
+						<td>Song title from MIDI metadata, or empty string.</td>
+					</tr>
+					<tr>
+						<td><span class="incode">karaoke</span></td>
+						<td><span class="incode">boolean</span></td>
+						<td>Whether the file contains parseable lyric data.</td>
+					</tr>
+					<tr>
+						<td><span class="incode">tempo</span></td>
+						<td><span class="incode">number</span></td>
+						<td>Initial tempo in BPM.</td>
+					</tr>
+					<tr>
+						<td><span class="incode">division</span></td>
+						<td><span class="incode">number</span></td>
+						<td>Ticks per quarter-note (PPQ).</td>
+					</tr>
+					<tr>
+						<td><span class="incode">duration</span></td>
+						<td><span class="incode">number</span></td>
+						<td>Total duration in seconds.</td>
+					</tr>
+					<tr>
+						<td><span class="incode">sampleRate</span></td>
+						<td><span class="incode">number</span></td>
+						<td>Web Audio context sample rate.</td>
+					</tr>
+					<tr>
+						<td><span class="incode">totalTicks</span></td>
+						<td><span class="incode">number</span></td>
+						<td>Total MIDI ticks in the song.</td>
+					</tr>
+					<tr>
+						<td><span class="incode">totalEvents</span></td>
+						<td><span class="incode">number</span></td>
+						<td>Total MIDI events across all tracks.</td>
+					</tr>
+					<tr>
+						<td><span class="incode">channels</span></td>
+						<td><span class="incode">Record&lt;string, number&gt;</span></td>
+						<td>Total MIDI events across all tracks.</td>
+					</tr>
+				</tbody>
+			</table>
+			<br><br>
+			<h4><span class="incode">presetsLoaded</span></h4>
+			<p>Emitted once all instrument presets have been downloaded and the player is fully ready.</p>
+			<pre><code class="language-javascript">
+				player.on('presetsLoaded', () => playButton.disabled = false);
+			</code></pre>
+			<br><br>
+			<h4><span class="incode">endOfFile</span></h4>
+			<p>Emitted when playback reaches the end of the MIDI file.</p>
+			<pre><code class="language-javascript">
+				player.on('endOfFile', () => playNextSong());
+			</code></pre>
+			<br><br>
+			<h4><span class="incode">karaoke</span></h4>
+			<p>Emitted for each timed lyric frame when karaoke mode is enabled. Inject html directly into a DOM element. The HTML uses predictable CSS classes:</p>
+			<table>
+				<thead>
+					<tr>
+						<th>Class</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><span class="incode">.karaoke-playing</span></td>
+						<td>Syllable currently being sung</td>
+					</tr>
+					<tr>
+						<td><span class="incode">.karaoke-played</span></td>
+						<td>Syllables already past</td>
+					</tr>
+					<tr>
+						<td><span class="incode">.karaoke-coming</span></td>
+						<td>Upcoming syllables</td>
+					</tr>
+					<tr>
+						<td><span class="incode">.karaoke-clear</span></td>
+						<td>Empty frame — silence between paragraphs</td>
+					</tr>
+					<tr>
+						<td><span class="incode">.karaoke-intro</span></td>
+						<td>Emitted before song start or after <span class="incode">stop()</span></td>
+					</tr>
+					<tr>
+						<td><span class="incode">.karaoke-title</span></td>
+						<td>Emitted when a title is detected in the MIDI metadata</td>
+					</tr>
+				</tbody>
+			</table>
+			<pre><code class="language-javascript">
+				const lyricsEl = document.getElementById('lyrics');
+				player.on('karaoke', ({ html }) => { lyricsEl.innerHTML = html; });
+			</code></pre>
+			<p>Payload:</p>
+			<table>
+				<thead>
+					<tr>
+						<th style="width: 20%">Field</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><span class="incode">type</span></td>
+						<td><span class="incode">'lyric' | 'clear' | 'intro' | 'title'</span></td>
+						<td>Frame type.</td>
+					</tr>
+					<tr>
+						<td><span class="incode">tick</span></td>
+						<td><span class="incode">number</span></td>
+						<td>MIDI tick at which this frame should appear.</td>
+					</tr>
+					<tr>
+						<td><span class="incode">html</span></td>
+						<td><span class="incode">string</span></td>
+						<td>HTML string ready for DOM injection.</td>
+					</tr>
+					<tr>
+						<td><span class="incode">title</span></td>
+						<td><span class="incode">string?</span></td>
+						<td>	Present only when <span class="incode">type === "title"</span>.</td>
+					</tr>
+				</tbody>
+			</table>
+			<br><br>
+			<h4><span class="incode">channelState</span></h4>
+			<p>Emitted whenever any MIDI channel transitions between active (sustaining notes) and idle. Fires only on actual state changes.</p>
+			<pre><code class="language-javascript">
+				player.on('channelState', (states) => {
+				  // { "1": true, "2": false, "10": true }
+				  Object.entries(states).forEach(([ch, active]) => {
+				    document.getElementById(`ch-${ch}`)?.classList.toggle('active', active);
+				  });
+				});
+			</code></pre>
+			<br><br>
+			<h2>Custom Preset Endpoint</h2>
+			<p>By default, presets are served from the official WebAudioFont CDN. If you want to self-host — to reduce latency, restrict the available preset set, or curate your own instrument library — you can deploy the <a target="_blank" noopener noreferrer href="https://github.com/WebAudioFonts/sf2-json">sf2-json template</a> and point the player at your own server:</p>
+			<pre><code class="language-javascript">
+				const player = new MidiAudioPlayer({
+				  endpoint: 'https://my-cdn.example.com/presets/',
+				});
+			</code></pre>
+			<p>The endpoint must expose:</p>
+			<ul>
+				<li><span class="incode">catalog.json</span> — the full instrument catalog</li>
+				<li><span class="incode">{presetId}.json</span> — one file per preset</li>
+			</ul>
+			<br><br><br>
+			<h2>Browser Compatibility</h2>
+			<p>Requires a modern browser with:</p>
+			<ul>
+				<li><a target="_blank" noopener noreferrer href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API">Web Audio API</a></li>
+				<li><a target="_blank" noopener noreferrer href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules">ES Modules</a></li>
+				<li><a target="_blank" noopener noreferrer href="https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API">IndexedDB</a> (optional, for preset caching)</li>
+			</ul>
+			<br><br><br>
+			<h2>Repository</h2>
+			<p><a target="_blank" noopener noreferrer href="https://github.com/WebAudioFonts/midi-audio-player">https://github.com/WebAudioFonts/midi-audio-player</a></p>
+		</section>
+
+
+		
+	</main>
+
+    <footer title="WebAudioFonts, ###YEAR###">
+        © All rights reserved<br>WebAudioFonts, ###YEAR###
+    </footer>
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-DZ45V5KSJJ"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+		gtag('config', 'G-DZ45V5KSJJ');
+	</script>
+</body>
+</html>
