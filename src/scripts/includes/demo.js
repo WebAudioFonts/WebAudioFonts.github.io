@@ -118,7 +118,6 @@ const DEMO = {
 		[this.btnPause, this.btnStop].forEach(btn => btn.classList.remove('active'));
 		this.btnPlay.classList.add('active');
 		await this.player.play();
-		await this.player.play();
 		this.log(this.player.getCurrentTick() ? "Resume" : "Play");
 	},
 
