@@ -147,6 +147,7 @@ header {
 	background-size: 95%;
 	background-repeat: no-repeat;
 	aspect-ratio: 965 / 260;
+	cursor: pointer;
 }
 
 main {
@@ -298,11 +299,6 @@ section {
 }
 
 table {
-	body {
-		// border-bottom: 0.1rem solid var(--color-third);
-		// background-color: red;
-		
-	}
 	th {
 		font-weight: 500;
 		text-align: left;
@@ -339,9 +335,9 @@ span.incode {
 
 
 
-main:has(section:first-child .controls) {
-    padding: 1rem 1rem;
-}
+// main:has(section:first-child .controls) {
+//     // padding: 1rem 1rem;
+// }
 
 
 
