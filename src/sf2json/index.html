@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en_CA" data-page="sf2json">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta name="description" content="WebAudioFont | A complete open-source stack for MIDI audio playback in the browser" />
+	<meta name="keywords" content="webaudiofonts, midi, midi-player, webaudio, webaudiofont, audio, music, browser-audio, midi-js, web-audio-api, midi-playback" />
+	<meta name="robots" content="index, follow" />
+	<meta name="language" content="en-CA" />
+	<meta property="og:locale" content="en_CA">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="WebAudioFonts">
+    <meta property="og:description" content="WebAudioFonts | sf2-json Documentation">
+    <meta property="og:url" content="https://webaudiofonts.com/sf2json/">
+    <meta property="og:image" content="https://webaudiofonts.com/images/ogimage.webp">
+	<meta property="og:image:alt" content="Logo WebAudioFonts">
+	<link rel="icon" type="image/png" href="/images/favicon.png">
+	<link rel="canonical" href="https://webaudiofonts.com/sf2json/">
+	<link rel="stylesheet" href="/styles/waf.core.min.css?###TIMESTAMP###">
+	<script src="/scripts/waf.core.min.js?###TIMESTAMP###"></script>
+	<title>WebAudioFonts | sf2-json Documentation</title>
+</head>
+<body>
+	<header>
+		<a href="/"><h1>WebAudioFonts</h1></a>
+	</header>
+	<main>
+		<section>
+			<h2>sf2-json</h2>
+			<p>Converts SoundFont 2 (<span class="incode">.sf2</span>) files into JSON presets consumable by the Web Audio API. Each preset is written as a <span class="incode">.json</span> file where sample data is base64-encoded Opus audio, ready to be decoded by <span class="incode">AudioContext.decodeAudioData()</span>.</p>
+			<p>Designed to generate presets for <span class="incode"><a href="/webaudiofontplayer/">webaudiofontplayer</a></span> — a sample-based MIDI instrument player built on the Web Audio API.</p>
+		</section>
+
+		<section>
+			<h2>Installation</h2>
+			<pre><code class="language-bash">
+				# As a project dependency (programmatic use)
+				npm install sf2-json
+
+				# Or globally for CLI use
+				npm install -g sf2-json
+			</code></pre>
+			<p>Runtime dependency: <span class="incode"><a target="_blank" noopener noreferrer href="https://www.npmjs.com/package/ffmpeg-static">ffmpeg-static</a></span> is bundled — no separate FFmpeg installation required.</p>
+		</section>
+
+		<section>
+			<h2>CLI</h2>
+			<pre><code class="language-bash">
+				sf2tojson &lt;input.sf2&gt; &lt;output_directory&gt;
+			</code></pre>
+			<p>Accepts <span class="incode">.sf2</span> and gzip-compressed <span class="incode">.sf2.gz</span> files. The output directory is created automatically if it does not exist.</p>
+			<pre><code class="language-bash">
+				# Convert a full General MIDI soundfont
+				sf2tojson ./GeneralUser.sf2 ./presets/
+
+				# Convert a compressed file
+				sf2tojson ./piano.sf2.gz ./presets/piano/
+			</code></pre>
+			<p>Progress is logged to stdout per preset:</p>
+			<pre><code class="language-bash">
+				[1/134] bank=0 program=0 "Acoustic Grand Piano"…
+				  ✓ 0000_GeneralUser.json (12 zones)
+				[2/134] bank=0 program=1 "Bright Acoustic Piano"…
+				  ✓ 0010_GeneralUser.json (11 zones)
+			</code></pre>
+		</section>
+
+
+		<section>
+			<h2>Node.js API</h2>
+			<pre><code class="language-javascript">
+				import sf2tojson from 'sf2-json';
+
+				const { written, skipped } = await sf2tojson(
+				  './assets/GeneralUser.sf2',
+				  './presets/',
+				  { verbose: true }
+				);
+
+				console.log(`${written} presets written, ${skipped} skipped.`);
+			</code></pre><br>
+			<h3><span class="incode">sf2tojson(inputPath, outputDir, options?)</span></h3>
+			<table>
+				<thead>
+					<tr>
+						<th style="width: 25%">Parameter</th>
+						<th style="width: 20%">Type</th>
+						<th style="width: 15%">Default</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><span class="incode">inputPath</span></td>
+						<td><span class="incode">string</span></td>
+						<td>—</td>
+						<td>Path to the <span class="incode">.sf2</span> or <span class="incode">.sf2.gz</span> source file</td>
+					</tr>
+					<tr>
+						<td><span class="incode">outputDir</span></td>
+						<td><span class="incode">string</span></td>
+						<td>—</td>
+						<td>Output directory (created recursively if absent)</td>
+					</tr>
+					<tr>
+						<td><span class="incode">options.verbose</span></td>
+						<td><span class="incode">boolean</span></td>
+						<td><span class="incode">true</span></td>
+						<td>Log progress per preset to stdout</td>
+					</tr>
+				</tbody>
+			</table>
+			<p>Returns a <span class="incode">Promise&lt;{ written: number, skipped: number }&gt;</span>. A preset is skipped if it contains no zones after parsing.</p>
+		</section>
+		
+		<section>
+			<h2>Output format</h2>
+			<p>Each preset is written as <span class="incode">&lt;presetId&gt;_&lt;bankName&gt;.json</span>. Example: <span class="incode">0000_GeneralUser.json</span>.</p>
+			<pre><code class="language-json">
+				{
+				  "id": "0000_GeneralUser",
+				  "presetId": "0000",
+				  "bank": "GeneralUser",
+				  "category": "Piano",
+				  "instrument": "Acoustic Grand Piano",
+				  "serie": 0,
+				  "program": 1,
+				  "zones": [
+				    {
+				      "originalPitch": 6000,
+				      "keyRangeLow": 0,
+				      "keyRangeHigh": 47,
+				      "velRangeLow": 0,
+				      "velRangeHigh": 127,
+				      "loopStart": 14402,
+				      "loopEnd": 17219,
+				      "coarseTune": 0,
+				      "fineTune": -3,
+				      "sampleRate": 48000,
+				      "ahdsr": true,
+				      "file": "T2dnUwAC..."
+				    }
+				  ]
+				}
+			</code></pre><br>
+			<h3>Top-level fields</h3>
+			<table>
+				<thead>
+					<tr>
+						<th style="width: 20%">Field</th>
+						<th style="width: 20%">Type</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><span class="incode">id</span></td>
+						<td><span class="incode">string</span></td>
+						<td>Unique identifier: <span class="incode">presetId_bankName</span></td>
+					</tr>
+					<tr>
+						<td><span class="incode">presetId</span></td>
+						<td><span class="incode">string</span></td>
+						<td>Zero-padded program number + series index (e.g. <span class="incode">"0000"</span>, <span class="incode">"0010"</span>)</td>
+					</tr>
+					<tr>
+						<td><span class="incode">bank</span></td>
+						<td><span class="incode">string</span></td>
+						<td>Source <span class="incode">.sf2</span> filename (without extension)</td>
+					</tr>
+					<tr>
+						<td><span class="incode">category</span></td>
+						<td><span class="incode">string</span></td>
+						<td>GM family (e.g. <span class="incode">"Piano"</span>, <span class="incode">"Strings"</span>, <span class="incode">"Percussion"</span>)</td>
+					</tr>
+					<tr>
+						<td><span class="incode">instrument</span></td>
+						<td><span class="incode">string</span></td>
+						<td>GM instrument name or SF2 preset name if available</td>
+					</tr>
+					<tr>
+						<td><span class="incode">serie</span></td>
+						<td><span class="incode">number</span></td>
+						<td>Disambiguates multiple presets on the same program number from different SF2 banks</td>
+					</tr>
+					<tr>
+						<td><span class="incode">program</span></td>
+						<td><span class="incode">number</span></td>
+						<td>GM program number (1-based). <span class="incode">-1</span> for drum kits (bank 128).</td>
+					</tr>
+					<tr>
+						<td><span class="incode">zones</span></td>
+						<td><span class="incode">Zone[]</span></td>
+						<td>Array of sample zones (see below)</td>
+					</tr>
+				</tbody>
+			</table>
+			<h3>Zone fields</h3>
+			<table>
+				<thead>
+					<tr>
+						<th style="width: 20%">Field</th>
+						<th style="width: 20%">Type</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><span class="incode">originalPitch</span></td>
+						<td><span class="incode">number</span></td>
+						<td>Root pitch of the sample in cents (MIDI note × 100, e.g. <span class="incode">6000</span> = middle C)</td>
+					</tr>
+					<tr>
+						<td><span class="incode">keyRangeLow</span></td>
+						<td><span class="incode">number</span></td>
+						<td>Lowest MIDI note this zone plays (0–127)</td>
+					</tr>
+					<tr>
+						<td><span class="incode">keyRangeHigh</span></td>
+						<td><span class="incode">number</span></td>
+						<td>Highest MIDI note this zone plays (0–127)</td>
+					</tr>
+					<tr>
+						<td><span class="incode">velRangeLow</span></td>
+						<td><span class="incode">number</span></td>
+						<td>Minimum velocity this zone responds to (0–127)</td>
+					</tr>
+					<tr>
+						<td><span class="incode">velRangeHigh</span></td>
+						<td><span class="incode">number</span></td>
+						<td>Maximum velocity this zone responds to (0–127)</td>
+					</tr>
+					<tr>
+						<td><span class="incode">loopStart</span></td>
+						<td><span class="incode">number</span></td>
+						<td>Loop start point in samples, resampled to 48 kHz</td>
+					</tr>
+					<tr>
+						<td><span class="incode">loopEnd</span></td>
+						<td><span class="incode">number</span></td>
+						<td>Loop end point in samples, resampled to 48 kHz</td>
+					</tr>
+					<tr>
+						<td><span class="incode">loopEnd</span></td>
+						<td><span class="incode">number</span></td>
+						<td>Loop end point in samples, resampled to 48 kHz</td>
+					</tr>
+					<tr>
+						<td><span class="incode">coarseTune</span></td>
+						<td><span class="incode">number</span></td>
+						<td>Coarse tuning offset in semitones</td>
+					</tr>
+					<tr>
+						<td><span class="incode">fineTune</span></td>
+						<td><span class="incode">number</span></td>
+						<td>Fine tuning offset in cents (includes SF2 <span class="incode">pitchCorrection</span>)</td>
+					</tr>
+					<tr>
+						<td><span class="incode">sampleRate</span></td>
+						<td><span class="incode">number</span></td>
+						<td>Always <span class="incode">48000</span> — all samples are resampled on export</td>
+					</tr>
+					<tr>
+						<td><span class="incode">ahdsr</span></td>
+						<td><span class="incode">boolean</span></td>
+						<td><span class="incode">true</span> if the zone has non-default AHDSR envelope parameters in the SF2</td>
+					</tr>
+					<tr>
+						<td><span class="incode">file</span></td>
+						<td><span class="incode">string</span></td>
+						<td>Base64-encoded Opus audio in an Ogg container</td>
+					</tr>
+				</tbody>
+			</table>
+		</section>
+
+		<section>
+			<h2>Conversion pipeline</h2>
+			<p>For each zone in each preset:</p>
+			<pre class="shema" style="text-align: left;">
+
+  SF2 raw sample (PCM16 or PCM24)
+          │
+          ▼
+    PCM24 → PCM16 conversion (if needed)
+          │
+          ▼
+    Peak normalization (target peak: 0.9 / 32767)
+          │
+          ▼
+    WAV container (44-byte header, mono, 16-bit)
+          │
+          ▼
+    FFmpeg: resample → 48 kHz, highpass 20 Hz, lowpass 20
+            kHz encode → Opus @ 96 kbps, mono, Ogg container
+          │
+          ▼
+    base64 → written to `file` field
+			</pre><br>
+			<h3>Constants</h3>
+			<table>
+				<thead>
+					<tr>
+						<th style="width: 35%">Constant</th>
+						<th style="width: 15%">Value</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><span class="incode">RESAMPLE_RATE</span></td>
+						<td><span class="incode">48000</span></td>
+						<td>Output sample rate for all zones</td>
+					</tr>
+					<tr>
+						<td><span class="incode">OPUS_KBPS</span></td>
+						<td><span class="incode">96</span></td>
+						<td>Opus encoding bitrate in kbps</td>
+					</tr>
+					<tr>
+						<td><span class="incode">MAX_NORMALIZE_FACTOR</span></td>
+						<td><span class="incode">1.0</span></td>
+						<td>Normalization is only applied downward (no upward gain)</td>
+					</tr>
+					<tr>
+						<td><span class="incode">FFMPEG_THREADS</span></td>
+						<td><span class="incode">32</span></td>
+						<td>Number of concurrent FFMPEG threads</td>
+					</tr>
+				</tbody>
+			</table>
+		</section>
+
+		<section>
+			<h2>Opus encoding</h2>
+			<p>Samples are encoded with Opus in an Ogg container via <span class="incode">libopus</span> through FFmpeg. This is the format's primary compression strategy.</p>
+			<ul>
+				<li><strong>Bitrate:</strong> 96 kbps per zone — sufficient for monophonic instrument samples with full harmonic content</li>
+				<li><strong>Resampling:</strong> All samples are normalized to 48 kHz regardless of their original rate in the SF2 file. Loop points are adjusted proportionally <span class="incode">(Math.round(loopPoint × (48000 / originalRate)))</span></li>
+				<li><strong>Filtering:</strong> A bandpass filter (highpass 20 Hz / lowpass 20 kHz) is applied before encoding to remove DC offset and ultrasonic content that would waste bits</li>
+				<li><strong>Mono only:</strong> SF2 samples are inherently mono — stereo panning is handled at the synthesizer level</li>
+				<li><strong>Container:</strong> Ogg is used rather than bare <span class="incode">.opus</span> for broad <span class="incode">AudioContext.decodeAudioData()</span> compatibility across browsers and runtimes</li>
+			</ul>
+			<p>The resulting base64-encoded Ogg/Opus blobs are decoded natively by the Web Audio API on first playback. No JavaScript audio decoder is needed.</p>
+		</section>
+
+		<section>
+			<h2>Generator merging</h2>
+			<p>SF2 zones are built by merging four generator layers in order:</p>
+			<ol>
+				<li><strong>SF2 default instrument zone</strong> — baseline values from the spec (<span class="incode">DefaultInstrumentZone</span>)</li>
+				<li><strong>Global instrument generators</strong> — zone-less generators defined at instrument scope</li>
+				<li><strong>Per-zone instrument generators</strong> — the zone's own values</li>
+				<li><strong>Preset generator offsets</strong> — additive offsets from the preset layer (global and per-zone)</li>
+			</ol>
+			<p>This mirrors the SF2 specification's generator precedence rules. The final merged object drives all zone parameters: key/velocity ranges, tuning, loop points, and AHDSR envelope.</p>
+			<p>Zones are deduplicated by key <span class="incode">keyLo-keyHi:velLo-velHi:sampleID</span> — if the same combination appears multiple times (due to preset layering), only the first occurrence is kept.</p>
+		</section>
+
+		<section>
+			<h2>Preset ID scheme</h2>
+			<p>The <span class="incode">presetId</span> field is formatted as <span class="incode">PPPS</span> where:</p>
+			<ul>
+				<li><span class="incode">PPP</span> is the zero-padded GM program number (0–127), or <span class="incode">128</span> for drum kits and the corresponding bank number for SFX banks (120–127)</li>
+				<li><span class="incode">S</span> is a series index that increments when multiple presets from the same SF2 map to the same program slot</li>
+			</ul>
+			<p>This ensures unique filenames when converting a multi-bank SF2 that contains several variants of the same instrument.</p>
+		</section>
+
+		<section>
+			<h2>AHDSR envelopes</h2>
+			<p>The <span class="incode">ahdsr</span> field in the output is <span class="incode">true</span> when at least one of the SF2 volume envelope generators (<span class="incode">attackVolEnv</span>, <span class="incode">holdVolEnv</span>, <span class="incode">decayVolEnv</span>, <span class="incode">sustainVolEnv</span>, <span class="incode">releaseVolEnv</span>) differs from the SF2 default value of <span class="incode">-12000</span> timecents (≈ 0 seconds) for time stages and 0 (no attenuation) for sustain.</p>
+			<p>When <span class="incode">ahdsr</span> is <span class="incode">true</span>, the consumer (e.g. <span class="incode">webaudiofontplayer</span>) reads the actual envelope parameters from the zone and schedules them against the Web Audio API's <span class="incode">GainNode</span>. When <span class="incode">false</span>, a simple full-sustain envelope is used.</p>
+		</section>
+
+		<section>
+			<h2>Supported input formats</h2>
+			<table>
+				<thead>
+					<tr>
+						<th style="width: 40%">Format</th>
+						<th>Support</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><span class="incode">.sf2</span></td>
+						<td>✅ Full support — PCM16 and PCM24 sample data</td>
+					</tr>
+					<tr>
+						<td><span class="incode">.sf2.gz</span></td>
+						<td>✅ Transparently decompressed via Node.js <span class="incode">zlib.gunzipSync</span></td>
+					</tr>
+					<tr>
+						<td>SF3 (compressed samples)</td>
+						<td>❌ Not supported — SF3 zones with pre-compressed audio are skipped</td>
+					</tr>
+				</tbody>
+			</table>
+		</section>
+
+		<section>
+			<h2>Integration with webaudiofontplayer</h2>
+			<p>Presets generated by <span class="incode">sf2-json</span> are the native input format for <span class="incode"><a href="/webaudiofontplayer/">webaudiofontplayer</a></span>:</p>
+			<pre><code class="language-javascript">
+				import WebAudioFontPlayer from 'webaudiofontplayer';
+				import preset from './presets/0000_Fluid3R.json' assert { type: 'json' };
+
+				const audioCtx = new AudioContext();
+				const player = new WebAudioFontPlayer(preset, audioCtx);
+
+				// Play middle C for 2 seconds
+				player.queueWaveTable(audioCtx.currentTime, 60, 2.0, 0.8);
+			</code></pre>
+			<p>The <span class="incode">zones[].file</span> base64 string is decoded by <span class="incode">webaudiofontplayer</span> on first note hit via <span class="incode">AudioContext.decodeAudioData()</span> and cached on the zone object as <span class="incode">zone.buffer</span> for subsequent calls.</p>
+		</section>
+
+		
+		<section>
+			<h2>Repository</h2>
+			<p><a target="_blank" noopener noreferrer href="https://github.com/WebAudioFonts/sf2-json">https://github.com/WebAudioFonts/sf2-json</a></p>
+		</section>
+
+
+		
+	</main>
+
+    <footer title="WebAudioFonts, ###YEAR###">
+        © All rights reserved<br>WebAudioFonts, ###YEAR###
+    </footer>
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-DZ45V5KSJJ"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+		gtag('config', 'G-DZ45V5KSJJ');
+	</script>
+</body>
+</html>

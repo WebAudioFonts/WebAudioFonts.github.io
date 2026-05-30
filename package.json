@@ -5,6 +5,11 @@
   },
   "dependencies": {
     "chokibasic": "^1.2.3",
-    "highlight.js": "^11.11.1"
+    "highlight.js": "^11.11.1",
+    "midi-audio-player": "^2.0.0"
+  },
+  "allowScripts": {
+    "esbuild@0.28.0": true,
+    "midi-player-js@2.0.17": true
   }
 }

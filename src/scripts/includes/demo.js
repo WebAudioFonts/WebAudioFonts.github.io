@@ -1,4 +1,4 @@
-import MidiAudioPlayer from "../libraries/midi-audio-player";
+import MidiAudioPlayer from "midi-audio-player";
 import DNDZone from "../libraries/dndzone";
 import DBMeter from "../libraries/dbmeter";
 import Slider from "../libraries/slider";
