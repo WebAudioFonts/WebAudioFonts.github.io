@@ -38,7 +38,7 @@
 				player.on('endOfFile', () => playAnotherSong());
 				await player.play('https://example.com/song.mid');
 			</code></pre>
-		</section><br>
+		</section>
 
 
 		<section>
@@ -61,7 +61,7 @@
 				<li>Bring your own preset endpoint (self-hosted sf2-json deployment)</li>
 				<li>ESM-native, compatible with bundlers and vanilla browser environments</li>
 			</ul>
-		</section><br>
+		</section>
 
 		<section>
 			<h2>Installation</h2>
@@ -72,7 +72,7 @@
 			<pre><code class="language-bash">
 				https://cdn.jsdelivr.net/npm/midi-audio-player/dist/midi-audio-player.min.js
 			</code></pre>
-		</section><br>
+		</section>
 
 		<section>
 			<h2>Quick Start</h2>
@@ -97,7 +97,7 @@
 				await player.play('https://example.com/song.mid');
 			</code></pre>
 			<p><em><strong>Note:</strong> <span class="incode">MidiAudioPlayer</span> must be instantiated in response to a user gesture (click, keydown, etc.), as browsers require user activation before creating a Web Audio context.</em></p>
-		</section><br>
+		</section>
 
 
 		<section>
@@ -188,8 +188,8 @@
 					</tr>
 				</tbody>
 			</table>
-			<br><br>
-			<h3>Getters / Setters</h3><br>
+			<br>
+			<h3>Getters / Setters</h3>
 			<table>
 				<thead>
 					<tr>
@@ -241,8 +241,8 @@
 					</tr>
 				</tbody>
 			</table>
-			<br><br>
-			<h3>EQ</h3><br>
+			<br>
+			<h3>EQ</h3>
 			<h4><span class="incode">getEQ() → EQGains</span></h4>
 			<p>Returns the current gain (in dB) for all 10 EQ bands.</p>
 			<pre><code class="language-javascript">
@@ -269,8 +269,8 @@
 				player.setChannelVolume(10, 0);    // Mute drums
 				player.setChannelVolume(1, 0.5);   // Half volume on channel 1
 			</code></pre>
-			<br><br>
-			<h3>Preset Catalog</h3><br>
+			<br>
+			<h3>Preset Catalog</h3>
 			<h4><span class="incode">getCatalog() → Promise&lt;Catalog&gt;</span></h4>
 			<p>Downloads and returns the full WebAudioFont preset catalog. Cached in <span class="incode">sessionStorage</span> after the first fetch.</p>
 			<pre><code class="language-javascript">
@@ -297,8 +297,8 @@
 			<pre><code class="language-javascript">
 				await player.loadPreset('0000_Steinway', 1);
 			</code></pre>
-			<br><br>
-			<h3>Song Loading</h3><br>
+			<br>
+			<h3>Song Loading</h3>
 			<h4><span class="incode">load(content, setup?) → Promise&lt;void&gt;</span></h4>
 			<p>Loads a MIDI file and prepares the audio engine for playback.</p>
 			<p><span class="incode">content</span> accepts:</p>
@@ -342,8 +342,8 @@
 			<br><br>
 			<h4><span class="incode">getTrainingPresets() → Promise&lt;string[]&gt;</span></h4>
 			<p>Returns the preset IDs currently registered in the internal program-to-preset override map.</p>
-			<br><br>
-			<h3>Playback Control</h3><br>
+			<br>
+			<h3>Playback Control</h3>
 			<h4><span class="incode">play(content?) → Promise&lt;boolean&gt;</span></h4>
 			<p>Starts or resumes playback. If <span class="incode">content</span> is provided, loads it first.</p>
 			<p>Returns <span class="incode">true</span> on success, <span class="incode">false</span> if the Web Audio context could not be resumed (browser autoplay restriction).</p>

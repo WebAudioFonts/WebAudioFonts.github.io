@@ -249,13 +249,70 @@
 			<table>
 				<thead>
 					<tr>
-						<th></th>
-						<th></th>
-						<th></th>
+						<th style="width: 25%;">Parameter</th>
+						<th style="width: 20%;">Type</th>
+						<th>Description</th>
 					</tr>
 				</thead>
-			</table>
+				<tbody>
+					<tr>
+						<td><span class="incode">value</span></td>
+						<td><span class="incode">number</span></td>
+						<td>Raw 14-bit MIDI pitch bend value (0–16383). Center = 8192.</td>
+					</tr>
+				</tbody>
+			</table><br>
+			<pre><code class="language-javascript">
+				player.setPitchBend(8192);  // No bend (center)
+				player.setPitchBend(16383); // Full bend up (+2 semitones)
+				player.setPitchBend(0);     // Full bend down (−2 semitones)
+			</code></pre><br>
+			<h3><span class="incode">player.isSustainActive()</span></h3>
+			<p>Returns <span class="incode">true</span> if the sustain pedal (CC64) is currently held.</p>
+			<pre><code class="language-javascript">
+				if (player.isSustainActive()) {
+				  // sustain is active
+				}
+			</code></pre><br>
+			<h3><span class="incode">player.registerSustainNote(cancelFn)</span></h3>
+			<p>Registers a callback to be called when the sustain pedal is released. Use this to implement hold behaviour: instead of letting a note stop naturally, extend it until sustain is released.</p>
+			<pre><code class="language-javascript">
+				const env = player.queueWaveTable(when, pitch, 9999, volume);
 
+				if (player.isSustainActive()) {
+				  player.registerSustainNote(() => env?.cancel());
+				} else {
+				  // Schedule normal note end
+				  setTimeout(() => env?.cancel(), duration * 1000);
+				}
+			</code></pre><br>
+			<h3><span class="incode">player.close()</span></h3>
+			<p>Releases all Web Audio nodes and clears internal state. Must be called when the player is no longer needed to avoid memory leaks.</p>
+			<pre><code class="language-javascript">
+				player.close();
+				// player must not be used after this point
+			</code></pre><br><br>
+			<h2>Audio graph</h2>
+			<p>The internal signal chain per player instance:</p>
+			<pre class="shema" style="text-align: left;">
+
+    bufferSource(s)
+        │
+     Envelope (GainNode × N, up to 64 voices)
+        │
+     mainGain (CC7 volume)
+        │
+     expressionGain (CC11 expression)
+        │
+     compressor.input  ──or──  audioCtx.destination
+			</pre><br><br><br>
+			<h2>TypeScript</h2>
+			<p>Type declarations are included. No <span class="incode">@types</span> package needed.</p>
+			<pre><code class="language-javascript">
+				import WebAudioFontPlayer, { Sf2Preset, NoteEnvelope, Slide } from 'webaudiofontplayer';
+			</code></pre><br><br>
+			<h2>Repository</h2>
+			<p><a target="_blank" noopener noreferrer href="https://github.com/WebAudioFonts/webaudiofontplayer">https://github.com/WebAudioFonts/webaudiofontplayer</a></p>
 		</section>
 
 
