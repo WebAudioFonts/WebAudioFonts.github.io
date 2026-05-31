@@ -39,6 +39,25 @@
 			</code></pre>
 		</section>
 
+
+		<section>
+			<h2>Quick start</h2>
+			<pre><code class="language-javascript">
+				import WebAudioFontPlayer from 'webaudiofontplayer';
+				import preset from './presets/acoustic_grand_piano.json'; // sf2-json format
+
+				const audioCtx = new AudioContext();
+
+				// load() resolves once all samples are decoded and ready to play
+				const player = await WebAudioFontPlayer.load(preset, audioCtx);
+
+				// Play middle C (MIDI 60) for 2 seconds at 80% volume
+				player.queueWaveTable(audioCtx.currentTime, 60, 2.0, 0.8);
+			</code></pre>
+		</section>
+
+
+
 		<section>
 			<h2>Preset format — sf2-json</h2>
 			<p><span class="incode">webaudiofontplayer</span> expects presets in the sf2-json format: SoundFont 2 (<span class="incode">.sf2</span>) files converted to JSON objects where each zone contains a base64-encoded audio sample.</p>
@@ -67,24 +86,55 @@
 			</code></pre>
 		</section>
 
-		<section>
-			<h2>Quick start</h2>
-			<pre><code class="language-javascript">
-				import WebAudioFontPlayer from 'webaudiofontplayer';
-				import preset from './presets/acoustic_grand_piano.json'; // sf2-json format
 
-				const audioCtx = new AudioContext();
-				const player = new WebAudioFontPlayer(preset, audioCtx);
-
-				// Play middle C (MIDI 60) for 2 seconds at 80% volume
-				player.queueWaveTable(audioCtx.currentTime, 60, 2.0, 0.8);
-			</code></pre>
-		</section>
 
 		<section>
 			<h2>API</h2>
-			<h3><span class="incode">new WebAudioFontPlayer(preset, audioCtx, compressor?)</span></h3>
-			<p>Creates a new player instance and initializes the audio graph.</p>
+			<h3><span class="incode">WebAudioFontPlayer.load(preset, audioCtx, compressor?)</span><br>✦ recommended</h3>
+			<p>Creates and fully initializes a player. The Promise resolves only after all audio samples in the preset have been decoded — <span class="incode">queueWaveTable</span> is guaranteed to work immediately after <span class="incode">await</span>.</p>
+			<table>
+				<thead>
+					<tr>
+						<th style="width: 25%">Parameter</th>
+						<th style="width: 20%">Type</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><span class="incode">preset</span></td>
+						<td><span class="incode">Sf2Preset</span></td>
+						<td>sf2-json preset object</td>
+					</tr>
+					<tr>
+						<td><span class="incode">audioCtx</span></td>
+						<td><span class="incode">AudioContext</span></td>
+						<td>Web Audio API context</td>
+					</tr>
+					<tr>
+						<td><span class="incode">compressor</span></td>
+						<td><span class="incode">AudioCompressorNode | null</span></td>
+						<td>Optional — routes output through your compressor or effects chain. If omitted, connects directly to <span class="incode">audioCtx.destination</span>.</td>
+					</tr>
+				</tbody>
+			</table>
+			<pre><code class="language-javascript">
+				// Basic usage
+				const player = await WebAudioFontPlayer.load(preset, audioCtx);
+
+				// With a custom compressor
+				const player = await WebAudioFontPlayer.load(preset, audioCtx, myCompressor);
+			</code></pre>
+			<p>The <span class="incode">compressor</span> parameter expects any object with an input: <span class="incode">AudioNode</span> property.</p>
+			<br>
+
+
+
+
+			<h3><span class="incode">new WebAudioFontPlayer(preset, audioCtx, compressor?, callback?)</span></h3>
+			<p><small><em><strong>Prefer</strong> <span class="incode">load()</span> <strong>over the constructor</strong>. The constructor starts decoding samples in the background; calling <span class="incode">queueWaveTable</span> before decoding completes will return <span class="incode">null</span>. Use <span class="incode">load()</span> if you need to guarantee the player is ready before playing.</em></small></p>
+
+			<p>The constructor is useful when you need a synchronous reference to the instance and can handle the not-yet-ready state yourself, or when integrating with code that doesn't support <span class="incode">await</span>.</p>
 			<table>
 				<thead>
 					<tr>
@@ -109,15 +159,18 @@
 						<td><span class="incode">AudioCompressorNode | null</span></td>
 						<td>Optional — routes output through your compressor or effects chain. If omitted, connects directly to <span class="incode">audioCtx.destination</span>.</td>
 					</tr>
+					<tr>
+						<td><span class="incode">callback</span></td>
+						<td><span class="incode">	() => void</span></td>
+						<td>Called once all samples are decoded</td>
+					</tr>
 				</tbody>
 			</table>
-			<p>The <span class="incode">compressor</span> parameter expects any object with an <span class="incode">input: AudioNode</span> property:</p>
 			<pre><code class="language-javascript">
-				// With a custom compressor
-				const player = new WebAudioFontPlayer(preset, audioCtx, myCompressor);
-
-				// Without compressor (connects to destination)
-				const player = new WebAudioFontPlayer(preset, audioCtx);
+				const player = new WebAudioFontPlayer(preset, audioCtx, null, () => {
+				  // samples are ready — safe to call queueWaveTable
+				  player.queueWaveTable(audioCtx.currentTime, 60, 1.0, 0.8);
+				});
 			</code></pre><br>
 			<h3><span class="incode">player.preset</span></h3>
 			<p>Gets or sets the active <span class="incode">sf2-json</span> preset. Swapping the preset takes effect on the next <span class="incode">queueWaveTable</span> call; notes already playing continue with the previous preset.</p>

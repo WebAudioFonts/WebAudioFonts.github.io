@@ -1,0 +1,57 @@
+
+
+html[data-page="catalog"] {
+
+	.presets_details,
+	.instruments_details {
+		margin-left: 2rem;
+	}
+
+	details:hover > summary {
+		background-color: var(--color-third-alpha);
+	}
+
+	details[open]:hover{
+		background-color: #ffffff00;
+	}
+
+	details[open] > summary {
+		background-color: var(--color-third-alpha);
+	}
+
+
+	
+	summary {
+		margin-bottom: 0.2rem;
+		padding-left: 0.5rem;
+		user-select: none;
+		cursor: pointer;
+	}
+
+
+	.scales_details {
+		display: flex;
+		flex-direction: row;
+		gap: 0.5rem;
+		padding: 0.5rem 0.5rem;
+		margin-left: 1rem;
+		margin-bottom: 0.5rem;
+		background-color: var(--color-third-alpha);
+
+		button {
+			appearance: none;
+			font-family: var(--font-family);
+			font-size: 0.6rem;
+			padding: 0.2rem 0.4rem;
+			background-color: var(--color-pre);
+			color: var(--color-third);
+		}
+
+		span {
+			font-size: 0.6rem;
+		}
+
+
+	}
+
+}

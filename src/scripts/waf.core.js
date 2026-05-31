@@ -1,5 +1,6 @@
 import './libraries/helpers';
 import DEMO from './includes/demo';
+import CATALOG from './includes/catalog';
 import hljs from 'highlight.js/lib/core';
 import javascript from 'highlight.js/lib/languages/javascript';
 import bash from 'highlight.js/lib/languages/bash';
@@ -17,6 +18,7 @@ hljs.registerLanguage('css', css);
 		await documentReady();
 		document.querySelector('header').addEventListener('click', () => location.href = '/');
 		if(document.documentElement.dataset.page == 'demo') DEMO.init();
+		else if(document.documentElement.dataset.page == 'catalog') CATALOG.init();
 		this.loadHljs();
 	},
 

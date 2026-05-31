@@ -8,4 +8,4 @@
 	Build:   ###DATE###
 	Author:  Maxime Larrivée-Roy <mlarriveeroy@gmail.com>
 	Github:  https://github.com/webaudiofonts/
-	Website: https://webaudiofonts.github.io/
+	Website: https://webaudiofonts.com/
