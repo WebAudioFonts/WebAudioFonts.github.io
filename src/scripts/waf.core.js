@@ -18,7 +18,7 @@ hljs.registerLanguage('css', css);
 ({
 
 	init: async function() {
-		await documentReady();
+		await Promise.all([this.cleanUrl(), documentReady()]);
 		document.querySelector('header').addEventListener('click', () => location.href = '/');
 		if(document.documentElement.dataset.page == 'demo') DEMO.init();
 		else if(document.documentElement.dataset.page == 'catalog') CATALOG.init();
@@ -29,6 +29,14 @@ hljs.registerLanguage('css', css);
 	loadHljs: async function() {
 		document.querySelectorAll('code').forEach(elm => elm.textContent = elm.textContent.trim().split("\n").map(row => row.replace(/^\t+/gm, "")).join("\n"));
 		hljs.highlightAll();
-	}
+	},
+
+	cleanUrl: async function() {
+		if (window.location.search.includes('fbclid')) {
+			const url = new URL(window.location);
+			url.searchParams.delete('fbclid');
+			window.history.replaceState({}, document.title, url.pathname + url.search);
+		}
+	},
 
 }).init();
