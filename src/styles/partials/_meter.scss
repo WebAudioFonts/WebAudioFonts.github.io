@@ -1,0 +1,38 @@
+
+.meter {
+	position: absolute;
+	top: 0;
+	right: 0rem;
+	height: 100%;
+	aspect-ratio: 1 / 10;
+	
+	&__background {
+		fill: var(--color-pre);
+	}
+	&__inner {
+		fill: black;
+		opacity: 0.5;
+	}
+
+	svg {
+		.meter__bands {
+			rect:nth-of-type(-n+3) {
+				// fill: red;
+				fill: var(--color-third);
+			}
+			rect:nth-of-type(n+4):nth-of-type(-n+7) {
+				// fill: gold;
+				fill: var(--color-second);
+			}
+			rect:nth-last-of-type(-n+29){
+				// fill: #0f0;
+				fill: var(--color-main);
+			}
+		}
+		.meter__bands > .meter__band {
+			opacity: 0.3;
+			transition: opacity 150ms ease-out;
+
+		}
+	}
+}

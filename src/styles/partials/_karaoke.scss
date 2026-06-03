@@ -1,0 +1,66 @@
+
+.karaoke {
+	--title: "";
+	position: relative;
+	display: flex;
+	padding: 1rem;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	// width: 80%;
+	width: 100%;
+	background-color: var(--color-pre);
+	line-height: 2.2rem;
+	min-height: 15rem;
+	user-select: none;
+	font-size: 1.1rem;
+	font-weight: 600;
+	text-shadow: 0 0 0.4rem black, 0 0 0.2rem black, 0 0 0.1rem black;
+
+	&::before {
+		content: var(--title);
+		position: absolute;
+		bottom: 0.2rem;
+		right: 0.8rem;
+		text-shadow: none;
+		font-size: 0.6rem;
+		font-weight: 400;
+		opacity: 0.7;
+	}
+
+	span {
+		display: inline-block;
+		transform-origin: center;
+		white-space: pre;
+	}
+
+	.karaoke-intro::before {
+		content: "Karaoke🎤";
+		font-size: 3rem;
+	}
+
+	.karaoke-title {
+		display: none;
+	}
+
+	.karaoke-clear::before {
+		content: "🎵";
+		font-size: 3rem;
+	}
+
+	.karaoke-played {
+		color: var(--color-second);
+	}
+
+	.karaoke-playing {
+		position: relative;
+		color: var(--color-third);
+		transform: scale(1.15) translateY(-8%);
+		z-index: 10;
+		font-weight: 700;
+		text-shadow: 0 0 0.1rem black, 0 0 0.2rem black, 0 0 0.4rem black, 0 0 0.6rem black;
+	}
+
+}
+
+

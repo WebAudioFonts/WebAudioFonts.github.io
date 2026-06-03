@@ -1,0 +1,29 @@
+@use "sass:string";
+@use "sass:color";
+@use "sass:math";
+
+
+
+
+
+@function hexbin($c) {
+	@return string.to-lower-case(string.unquote('#{string.slice(ie-hex-str($c), 4)}'));
+}
+
+
+@function hex-adjust($color, $adj-lightness) {
+	$adjusted-color: color.adjust($color, $lightness: $adj-lightness);
+	$r: math.round(color.channel($adjusted-color, "red", $space: rgb));
+	$g: math.round(color.channel($adjusted-color, "green", $space: rgb));
+	$b: math.round(color.channel($adjusted-color, "blue", $space: rgb));
+	$ie-hex: color.ie-hex-str(rgb($r, $g, $b));
+	@return string.unquote("#" + string.slice($ie-hex, 4));
+}
+
+
+$color-main:   #ffa48d;
+$color-second: #fd3c84;
+$color-third:  #06b6d4;
+$color-hljs:   #5c545b;
+$color-bg:     #111827;
+$color-pre:    #322931; 

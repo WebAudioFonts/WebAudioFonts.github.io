@@ -37,6 +37,8 @@ html[data-page="catalog"] {
 		margin-left: 1rem;
 		margin-bottom: 0.5rem;
 		background-color: var(--color-third-alpha);
+		vertical-align: center;
+		overflow: hidden;
 
 		button {
 			appearance: none;
@@ -45,10 +47,21 @@ html[data-page="catalog"] {
 			padding: 0.2rem 0.4rem;
 			background-color: var(--color-pre);
 			color: var(--color-third);
+			white-space: nowrap;
+			height: 1.6rem;
+			user-select: none;
 		}
 
 		span {
+			vertical-align:middle;
 			font-size: 0.6rem;
+			&.presetzones {
+				white-space: nowrap;
+			}
+			&.presetIndex,
+			&.presetId {
+				cursor: pointer;
+			}
 		}
 
 

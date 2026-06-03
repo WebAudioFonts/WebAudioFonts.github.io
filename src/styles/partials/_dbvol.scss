@@ -1,0 +1,56 @@
+
+.dbvol {
+	position: absolute;
+	top: 0;
+	left: 0rem;
+	height: 100%;
+	aspect-ratio: 1 / 10;
+
+	&:hover &__slider rect {
+		fill: #444;
+	}
+
+	&__input {
+		writing-mode: vertical-lr;
+		position: absolute;
+		display: block;
+		top: 5%;
+		left: 0;
+		height: 90%;
+		aspect-ratio: 1 / 10;
+
+		cursor: pointer;
+		opacity: 0;
+		appearance: none;
+		z-index: 2;
+	}
+
+	&__svg {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		z-index: 1;
+		pointer-events: none;
+	}
+
+	&__background {
+		fill: var(--color-pre);
+	}
+	&__inner {
+		fill: black;
+		stroke: var(--color-main);
+	}
+
+	&__slider {
+		transform: translateY(var(--y));
+		// transition: transform 0.1s ease-out; 
+		cursor: pointer;
+
+
+		& > path:nth-child(3) {
+			fill: var(--color-third);
+		}
+	}
+}

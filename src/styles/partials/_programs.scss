@@ -1,0 +1,211 @@
+
+@property --light-opacity {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+
+.programs {
+
+	&.disabled{
+		pointer-events: none;
+		filter: saturate(0%);
+		opacity: 0.5;
+	}
+
+
+	hr {
+		background-color: var(--color-bg2);
+	}
+
+	&__btnwrapper {
+		position: relative;
+		display: flex;
+		flex-direction: row;
+		justify-content: space-around;
+		width: 90%;
+		padding-bottom: 1rem;
+
+		button {
+			-webkit-appearance: none;
+			appearance: none;
+			border-radius: 0;
+			font-family: var(--font-family);
+			// background-color: color.adjust($color-main, $alpha: -0.85);
+			background-color: var(--color-bg2);
+			color: var(--color-main);
+			font-size: 1rem;
+			padding: 0.5rem;
+			width: 12rem;
+		}
+
+	}
+
+
+}
+
+
+
+
+section:has(.instruments) {
+	background-color: var(--color-pre);
+	user-select: none;
+}
+
+.instruments {
+	position: relative;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	row-gap: 1rem;
+	width: 70%;
+	padding: 1rem 1rem 0 1rem;
+
+	.program {
+		color: var(--color-third);
+		filter: drop-shadow(0 0 0.3rem black);
+
+		&.vocal {
+			filter: drop-shadow(0 0 0.2rem black) drop-shadow(0 0 0.3rem crimson) drop-shadow(0 0 0.45rem white);
+		}
+	}
+
+	& > .instrument {
+		position: relative;
+		width: 100%;
+
+		.inst {
+			position: absolute;
+			top: 0;
+			left: -2.5rem;
+			height: 100%;
+			aspect-ratio: 1 / 1;
+			background-position: center center;
+			background-repeat: no-repeat;
+			background-size: contain;
+			filter: drop-shadow(0 0 0.3rem black);
+
+			&.gm-00 { background-image: var(--gm-inst-00); }
+			&.gm-01 { background-image: var(--gm-inst-01); }
+			&.gm-02 { background-image: var(--gm-inst-02); }
+			&.gm-03 { background-image: var(--gm-inst-03); }
+			&.gm-04 { background-image: var(--gm-inst-04); }
+			&.gm-05 { background-image: var(--gm-inst-05); }
+			&.gm-06 { background-image: var(--gm-inst-06); }
+			&.gm-07 { background-image: var(--gm-inst-07); }
+			&.gm-08 { background-image: var(--gm-inst-08); }
+			&.gm-09 { background-image: var(--gm-inst-09); }
+			&.gm-10 { background-image: var(--gm-inst-10); }
+			&.gm-11 { background-image: var(--gm-inst-11); }
+			&.gm-12 { background-image: var(--gm-inst-12); }
+			&.gm-13 { background-image: var(--gm-inst-13); }
+			&.gm-14 { background-image: var(--gm-inst-14); }
+			&.gm-15 { background-image: var(--gm-inst-15); }
+			&.gm-16 { background-image: var(--gm-inst-16); }
+		}
+
+		.program {
+			position: absolute;
+			top: 0;
+			left: -5rem;
+			height: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.light {
+			position: absolute;
+			top: 0;
+			right: -5rem;
+			height: 100%;
+			aspect-ratio: 1 / 1;
+			// background-color: color.adjust($color-main, $alpha: -0.8);
+			background-color: var(--color-bg2);
+			border-radius: 100%;
+			overflow: hidden;
+
+			&::after {
+				content: "";
+				position: absolute;
+				inset: 0;
+				background-color: var(--color-second);
+				opacity: var(--light-opacity, 0);
+			}
+		}
+
+		.dial-wrapper.instrument {
+			position: absolute;
+			top: 0;
+			right: -2.5rem;
+			height: 100%;
+
+			--dial-size: 1.65rem;
+			--dial-thickness: 0.04;
+
+		}
+
+
+		& > select {
+			-webkit-appearance: none;
+			appearance: none;
+			border-radius: 0;
+			width: 100%;
+			font-family: var(--font-family);
+			background-color: var(--color-bg2);
+			color: var(--color-main);
+			font-size: 1rem;
+			scrollbar-width: thin;
+			scrollbar-color: var(--color-hljs2) var(--color-hljs3);
+			padding: 0.15rem;
+			border: none;
+			background-image: var(--sel-arrow);
+			background-repeat: no-repeat;
+			background-position: right 0.3rem bottom;
+			background-size: 1rem;
+			user-select: none;
+		
+			padding-right: 1.5rem;
+			&::-webkit-scrollbar {
+				height: 0.2rem;
+			}
+
+			&::-webkit-scrollbar-track {
+				background: var(--color-hljs3);
+				border-radius: 0.1rem;
+			}
+
+			&::-webkit-scrollbar-thumb {
+				background-color: var(--color-hljs2);
+				border-radius: 0.1rem;
+				border: 0.05rem solid var(--color-hljs3);
+			}
+
+			&::-webkit-scrollbar-thumb:hover {
+				background-color: var(--color-hljs1)
+			}
+
+			& > option {
+				font-family: var(--font-family);
+				background-color: var(--color-bg2);
+				color: var(--color-main);
+
+				&:disabled {
+					font-style: italic;
+					font-weight: 700;
+					color: var(--color-second);
+				}
+
+			}
+
+		}
+
+
+	}
+
+}
+
+
+
+

@@ -1,0 +1,82 @@
+
+.waveform {
+	--progress: 0%;
+	--pad: 0.5rem;
+	--time: "0:00";
+	--duration: "0:00";
+	position: relative;
+	width: 80%;
+	padding: var(--pad);
+	background-color: var(--color-pre);
+	user-select: none;
+	border-radius: 0.2rem;
+
+	&.disabled {
+		svg {
+			filter: saturate(0%);
+			opacity: 0.5;
+		}
+		pointer-events: none;
+	}
+
+	&__container {
+		position: relative;
+		width: 100%;
+		aspect-ratio: 5 / 1;
+
+		&::before {
+			content: var(--time);
+			position: absolute;
+			display: block;
+			top: 0.2rem;
+			left: 0.2rem;
+			font-size: 0.7rem;
+			font-family: var(--font-monospace);
+			text-shadow: 0 0 0.4rem black, 0 0 0.2rem black, 0 0 0.1rem black;
+			z-index: 10;
+		}
+
+		&::after {
+			content: var(--duration);
+			display: inline-block;
+			position: absolute;
+			display: block;
+			top: 0.2rem;
+			right: 0.2rem;
+			font-size: 0.7rem;
+			font-family: var(--font-monospace);
+			text-shadow: 0 0 0.4rem black, 0 0 0.2rem black, 0 0 0.1rem black;
+			z-index: 10;
+		}
+	}
+
+	&__progress {
+		position: absolute;
+		inset: var(--pad);
+	}
+
+	&__pointer {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: var(--progress);
+		height: 100%;
+		border-right: 0.1rem solid var(--color-second);
+		background-color: rgba(0, 0, 0, 0.2);
+		transition: width 50ms linear;
+    	box-shadow: 0.3125rem 0rem 0.3125rem -0.125rem rgba(0, 0, 0, 0.3);
+	}
+
+	&__click {
+		position: absolute;
+		inset: var(--pad);
+		z-index: 20;
+		cursor: pointer;
+	}
+
+	.midiaudioplayer-waveform {
+		stroke: var(--color-third);
+		stroke-width: 2px;
+	}
+
+}

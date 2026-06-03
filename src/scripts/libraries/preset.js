@@ -41,7 +41,15 @@ export default class Preset {
 						await working(this.#catalog.playScale(this.#preset.id, 'dorian'));
 					});
 				}
-				this.#container.create('span', null, `<span class="incode">${this.#preset.id}</span>&nbsp;&nbsp;(${preset.value.zones.length} zones)`);
+				this.#container.create('span', null, `<span class="incode presetIndex">${this.#preset.index}</span>&nbsp;&nbsp;<span class="incode presetId">${this.#preset.id}</span>&nbsp;&nbsp;<span class="presetzones">(${preset.value.zones.length} zones)</span>`);
+				this.#container.querySelector('.presetIndex').addEventListener('click', () => {
+					if(copyToClipboard(this.#preset.index)) this.#catalog.notification.thumbsUp("Preset Index copied");
+					else this.#catalog.notification.error("Error copying Preset Index");
+				});
+				this.#container.querySelector('.presetId').addEventListener('click', () => {
+					if(copyToClipboard(this.#preset.id)) this.#catalog.notification.thumbsUp("Preset ID copied");
+					else this.#catalog.notification.error("Error copying Preset ID");
+				});
 				this.#loaded = true;
 			}
 		});

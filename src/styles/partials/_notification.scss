@@ -1,0 +1,68 @@
+@use "config" as *;
+
+.notification {
+
+	--thumbsup:  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='none' d='M0 0h20v20H0z'/%3E%3Cpath fill='%23#{hexbin($color-third)}' d='M12.7 2h.4c.6.3.9.9.7 1.4-.2.6-1 3-1 3.6 0 .5.7 1 1.3 1h3c.6 0 1 .4 1 1s-2 7-2 7c-.1.4-.5 1-1 1H6V8h2.1c.5-.4 3.3-4.7 3.6-5.3.2-.4.6-.6 1-.7zM2 8h2v9H2V8z'/%3E%3C/svg%3E");
+	--error:     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' xml:space='preserve' viewBox='0 0 512 512'%3E%3Cpath fill='%23#{hexbin($color-third)}' d='M187 265v28c0 5 4 9 9 9h23c5 0 9-4 9-9v-23h8v23c0 5 4 9 10 9h23c5 0 9-4 9-9v-23h8v23c0 5 4 9 9 9h23c6 0 10-4 10-9v-28c24-7 64-23 78-56 9-23 6-55-9-115S339 0 257 0 132 34 118 94c-15 60-19 92-9 115 13 33 54 49 78 56zm127-156c22-4 43 13 47 38 5 25-9 47-31 51s-43-14-47-38c-5-25 9-48 31-51zm-26 112h-61l30-36 31 36zm-135-74c4-25 26-42 47-38 22 3 36 26 32 51-5 24-26 42-48 38-21-4-35-26-31-51z'/%3E%3Cpath fill='%23#{hexbin($color-third)}' d='M450 398c-16-7-35-1-44 13-7 8-17 5-21 3l-82-36c36-17 66-31 73-33 16-8 28-12 39-3 10 13 28 18 43 11 18-8 25-28 17-45-5-10-15-16-26-18 6-9 6-20 1-30-8-17-29-24-46-16-15 7-22 23-19 38 1 11-15 20-26 25l-106 49-100-44c-17-7-28-14-27-27 4-16-4-32-19-39-18-8-38 0-46 16-5 10-4 22 1 31-11 1-20 8-25 18-8 17 0 36 17 44 15 7 33 2 42-10 9-8 26-1 38 4l69 30-84 38h-9l-1-1c-8-16-29-23-46-16-17 8-25 28-16 45 5 10 14 16 25 18-5 9-6 20-1 30 8 17 29 24 46 16 16-8 24-26 18-42-3-10 6-15 11-17l107-49 122 54c3 2 5 4 6 7v1c-8 16-1 36 17 44 17 8 38 0 46-16 4-10 4-22-2-31 11-2 20-8 25-18 8-17 1-36-17-44z'/%3E%3C/svg%3E");
+
+
+	position: fixed;
+	top: calc(100vh - 0.5rem);
+	left: 0.5rem;
+	max-width: 50rem;
+	// height: 5rem;
+	transform: translateY(-100%) scale(0);
+	background-color: var(--color-pre);
+	// box-shadow: var(--shadow);
+	filter: drop-shadow(0.8rem -0.8rem 1rem #00000099);
+	border: 0.2rem dotted var(--color-third);
+	transition: transform 100ms;
+	transform-origin: bottom left;
+
+	display: flex;
+	text-align: center;
+	align-items: center;
+	justify-content: center;
+
+	font-size: 1.2rem;
+	font-weight: 600;
+	padding: 1rem 1.5rem;
+
+	user-select: none;
+
+	z-index: 100000;
+	
+
+	&::before {
+		content: '';
+		position: absolute;
+		width: 3rem;
+		aspect-ratio: 1/1;
+		top: 0rem;
+		right: 0rem;
+		border-radius: 50%;
+		transform: translate(50%, -50%);
+		background-repeat: no-repeat;
+		background-size: 65%;
+		background-position: center;
+	}
+
+	&.show {
+		transform: translateY(-100%) scale(1);
+	}
+
+
+	&.thumbsup {
+		&::before {
+			background-image: var(--thumbsup);
+		}
+	}
+
+	&.error {
+		&::before {
+			background-image: var(--error);
+		}
+	}
+
+
+}

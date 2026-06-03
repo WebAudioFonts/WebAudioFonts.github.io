@@ -115,11 +115,11 @@ const DEMO = {
 	},
 
 
-	play: async function() {
+	play: async function(skiplog = false) {
 		[this.btnPause, this.btnStop].forEach(btn => btn.classList.remove('active'));
 		this.btnPlay.classList.add('active');
 		await this.player.play();
-		this.log(this.player.getCurrentTick() ? "Resume" : "Play");
+		if(!skiplog) this.log(this.player.getCurrentTick() ? "Resume" : "Play");
 	},
 
 
@@ -200,11 +200,11 @@ const DEMO = {
 
 	presetLoaded: async function(instruments) {
 		await this.loadPrograms(
-			(preset, channel) => busy(this.player.loadPreset(preset, channel)),
+			(preset, channel) => busy(this.player.loadPreset(preset, channel, true)),
 			(volume, channel) => this.player.setChannelVolume(channel, volume)
 		);
 		if(!this.firstPlay) {
-			this.play();
+			this.play(true);
 			this.log('Autoplay');
 		} else this.firstPlay = false;
 		this.log("----------------------------------------");

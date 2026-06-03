@@ -120,6 +120,7 @@
 				{
 				  "id": "0000_GeneralUser",
 				  "presetId": "0000",
+				  "index": 0,
 				  "bank": "GeneralUser",
 				  "category": "Piano",
 				  "instrument": "Acoustic Grand Piano",
@@ -162,6 +163,11 @@
 						<td><span class="incode">presetId</span></td>
 						<td><span class="incode">string</span></td>
 						<td>Zero-padded program number + series index (e.g. <span class="incode">"0000"</span>, <span class="incode">"0010"</span>)</td>
+					</tr>
+					<tr>
+						<td><span class="incode">index</span></td>
+						<td><span class="incode">number</span></td>
+						<td>Position of this preset in the SF2 file, computed as <span class="incode">bank × 128 + preset</span>. Used to reference presets in <span class="incode">catalog.yaml</span> (e.g. to skip or remap them).</td>
 					</tr>
 					<tr>
 						<td><span class="incode">bank</span></td>
@@ -366,6 +372,43 @@
 			</ul>
 			<p>This ensures unique filenames when converting a multi-bank SF2 that contains several variants of the same instrument.</p>
 		</section>
+
+		<section>
+			<h2>catalog.yaml</h2>
+			<p>A <span class="incode">catalog.yaml</span> file can be placed in the same directory as the <span class="incode">.sf2</span> file to control how specific presets are processed. The top-level key must match the SF2 filename (without extension).</p>
+			<pre><code class="language-yaml">
+				GeneralUserGS:
+				  skip:
+				    - 15385        # skip preset at index 15385
+				  map:
+				    15385: 128     # remap preset at index 15385 to program 128
+			</code></pre>
+			<p>Preset indices are computed as <span class="incode">bank × 128 + preset</span> — the same value exposed as <span class="incode">index</span> in the output JSON. This matches the <span class="incode">index</span> field of each exported preset.</p>
+			<h3>Supported directives</h3>
+			<table>
+				<thead>
+					<tr>
+						<th style="width: 15%">Key</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><span class="incode">skip</span></td>
+						<td><span class="incode">number[]</span></td>
+						<td>List of preset indices to exclude from conversion. Matching presets are counted as skipped and no <span class="incode">.json</span> file is written.</td>
+					</tr>
+					<tr>
+						<td><span class="incode">map</span></td>
+						<td><span class="incode">Record&lt;number, number&gt;</span></td>
+						<td>Overrides the GM program number for a given preset index. Useful when a bank's numbering diverges from the GM standard (e.g. drum kits stored at unexpected program slots).</td>
+					</tr>
+				</tbody>
+			</table>
+			<p>Both directives are optional. <span class="incode">map</span> entries are applied before <span class="incode">serie</span> disambiguation and <span class="incode">presetId</span> generation, so the remapped program number drives the output filename.</p>
+		</section>
+
 
 		<section>
 			<h2>AHDSR envelopes</h2>

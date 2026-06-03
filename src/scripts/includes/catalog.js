@@ -1,10 +1,10 @@
 import Category from "../libraries/category";
+import Notification from "../libraries/notification";
 import WebAudioFontPlayer from "webaudiofontplayer";
 import indexedDbStorage from "../libraries/indexeddbstorage";
 
 
 const DRUM_SOLO = [
-    // Mesure 1 — groove de base
     { midi: 36, time: 0.0  }, // kick
     { midi: 42, time: 0.0  }, // hi-hat
     { midi: 38, time: 0.5  }, // snare
@@ -13,8 +13,6 @@ const DRUM_SOLO = [
     { midi: 42, time: 1.0  }, // hi-hat
     { midi: 38, time: 1.5  }, // snare
     { midi: 42, time: 1.5  }, // hi-hat
-
-    // Mesure 2 — fill descendant
     { midi: 50, time: 2.0  }, // high tom
     { midi: 48, time: 2.25 }, // hi-mid tom
     { midi: 47, time: 2.5  }, // low-mid tom
@@ -26,61 +24,23 @@ const DRUM_SOLO = [
 ];
 
 const PROGRAM_ROOT_MIDI = [
-    // 0–7 : Pianos
-    60, 60, 60, 60, 60, 60, 60, 60,
-
-    // 8–15 : Chromatic Perc
-    60, 60, 60, 60, 60, 60, 60, 60,
-
-    // 16–23 : Orgues
-    60, 60, 60, 60, 60, 60, 60, 60,
-
-    // 24–31 : Guitares
-    // Nylon, Steel, Jazz, Clean, Muted, Overdrive, Distortion, Harmonics
-    52, 52, 52, 52, 52, 52, 52, 64,
-
-    // 32–39 : Basses
-    40, 40, 40, 40, 40, 40, 40, 40,
-
-    // 40–47 : Cordes
-    // Violin, Viola, Cello, Contrabass, Tremolo, Pizzicato, Harp, Timpani
-    69, 62, 50, 40, 62, 62, 60, 40,
-
-    // 48–55 : Ensemble
-    60, 60, 60, 60, 65, 65, 65, 60,
-
-    // 56–63 : Cuivres
-    // Trumpet, Trombone, Tuba, Muted Trumpet, French Horn, Brass, Synth Brass x2
-    62, 52, 45, 62, 60, 60, 60, 60,
-
-    // 64–71 : Reed
-    // Soprano Sax, Alto Sax, Tenor Sax, Baritone Sax, Oboe, English Horn, Bassoon, Clarinet
-    65, 60, 55, 48, 65, 60, 52, 62,
-
-    // 72–79 : Pipe (flûtes)
-    // Piccolo, Flute, Recorder, Pan Flute, Blown Bottle, Shakuhachi, Whistle, Ocarina
-    72, 67, 65, 65, 65, 65, 70, 65,
-
-    // 80–87 : Synth Lead
-    60, 60, 60, 60, 60, 60, 60, 60,
-
-    // 88–95 : Synth Pad
-    60, 60, 60, 60, 60, 60, 60, 60,
-
-    // 96–103 : Synth Effects
-    60, 60, 60, 60, 60, 60, 60, 60,
-
-    // 104–111 : Ethnic
-    // Sitar, Banjo, Shamisen, Koto, Kalimba, Bagpipe, Fiddle, Shanai
-    60, 60, 60, 60, 60, 60, 62, 60,
-
-    // 112–119 : Percussif
-    60, 60, 60, 60, 60, 60, 60, 60,
-
-    // 120–127 : Sound Effects
-    60, 60, 60, 60, 60, 60, 60, 60,
+    60, 60, 60, 60, 60, 60, 60, 60, // 0–7 : Pianos
+    60, 60, 60, 60, 60, 60, 60, 60, // 8–15 : Chromatic Perc
+    60, 60, 60, 60, 60, 60, 60, 60, // 16–23 : Orgues
+    52, 52, 52, 52, 52, 52, 52, 64, // 24–31 : Guitares / Nylon, Steel, Jazz, Clean, Muted, Overdrive, Distortion, Harmonics
+    40, 40, 40, 40, 40, 40, 40, 40, // 32–39 : Basses
+    69, 62, 50, 40, 62, 62, 60, 40, // 40–47 : Cordes / Violin, Viola, Cello, Contrabass, Tremolo, Pizzicato, Harp, Timpani
+    60, 60, 60, 60, 65, 65, 65, 60, // 48–55 : Ensemble
+    62, 52, 45, 62, 60, 60, 60, 60, // 56–63 : Cuivres / Trumpet, Trombone, Tuba, Muted Trumpet, French Horn, Brass, Synth Brass x2
+    65, 60, 55, 48, 65, 60, 52, 62, // 64–71 : Reed / Soprano Sax, Alto Sax, Tenor Sax, Baritone Sax, Oboe, English Horn, Bassoon, Clarinet
+    72, 67, 65, 65, 65, 65, 70, 65, // 72–79 : Pipe (flûtes) / Piccolo, Flute, Recorder, Pan Flute, Blown Bottle, Shakuhachi, Whistle, Ocarina
+    60, 60, 60, 60, 60, 60, 60, 60, // 80–87 : Synth Lead
+    60, 60, 60, 60, 60, 60, 60, 60, // 88–95 : Synth Pad
+    60, 60, 60, 60, 60, 60, 60, 60, // 96–103 : Synth Effects
+    60, 60, 60, 60, 60, 60, 62, 60, // 104–111 : Ethnic / Sitar, Banjo, Shamisen, Koto, Kalimba, Bagpipe, Fiddle, Shanai
+    60, 60, 60, 60, 60, 60, 60, 60, // 112–119 : Percussif
+    60, 60, 60, 60, 60, 60, 60, 60, // 120–127 : Sound Effects
 ];
-
 
 const SCALES = {
     phrygian: {
@@ -109,8 +69,10 @@ const CATALOG = {
 	container: null,
 	audioCtx: null,
 	player: null,
+    notification: null,
 
 	init: async function() {
+        this.notification = new Notification;
 		this.parent = document.querySelector('.categories');
 		this.container = create('div');
 		(await this.getCatalog()).categories.forEach(category => new Category(this.container, category, this));
