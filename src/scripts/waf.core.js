@@ -30,6 +30,7 @@ hljs.registerLanguage('css', css);
 		document.querySelectorAll('code').forEach(elm => elm.textContent = elm.textContent.trim().split("\n").map(row => row.replace(/^\t+/gm, "")).join("\n"));
 		hljs.highlightAll();
 	},
+	
 
 	cleanUrl: async function() {
 		if (window.location.search.includes('fbclid')) {
