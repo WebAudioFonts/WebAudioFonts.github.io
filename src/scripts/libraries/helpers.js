@@ -30,6 +30,12 @@ self.working = async (promise) => {
 	document.documentElement.classList.remove('is-working');
 	return promise instanceof Array ? results : results[0];
 }
+self.playing = async (promise) => {
+	document.documentElement.classList.add('is-playing');	
+	const results = await Promise.allSettled(promise instanceof Array ? promise : [promise]);
+	document.documentElement.classList.remove('is-playing');
+	return promise instanceof Array ? results : results[0];
+}
 
 
 /******************************************************

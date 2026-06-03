@@ -28,17 +28,17 @@ export default class Preset {
 				this.#container.replaceChildren();
 				if(+parts[1] == 128) {
 					this.#container.create('button', null, 'Drum Solo ▶').addEventListener('click', async () => {
-						await working(this.#catalog.drumSolo(this.#preset.id));
+						await playing(this.#catalog.drumSolo(this.#preset.id));
 					});
 				} else {
 					this.#container.create('button', null, 'Harmonic Minor ▶').addEventListener('click', async () => {
-						await working(this.#catalog.playScale(this.#preset.id, 'minor'));
+						await playing(this.#catalog.playScale(this.#preset.id, 'minor'));
 					});
 					this.#container.create('button', null, 'Phrygian ▶').addEventListener('click', async () => {
-						await working(this.#catalog.playScale(this.#preset.id, 'phrygian'));
+						await playing(this.#catalog.playScale(this.#preset.id, 'phrygian'));
 					});
 					this.#container.create('button', null, 'Dorian ▶').addEventListener('click', async () => {
-						await working(this.#catalog.playScale(this.#preset.id, 'dorian'));
+						await playing(this.#catalog.playScale(this.#preset.id, 'dorian'));
 					});
 				}
 				this.#container.create('span', null, `<span class="incode presetIndex">${this.#preset.index}</span>&nbsp;&nbsp;<span class="incode presetId">${this.#preset.id}</span>&nbsp;&nbsp;<span class="presetzones">(${preset.value.zones.length} zones)</span>`);

@@ -23,6 +23,12 @@ html {
         cursor: progress !important;
         pointer-events: none !important;
     }
+
+    &.is-playing,
+    &.is-playing * {
+		animation: cursor-music 332ms step-end infinite;
+        pointer-events: none !important;
+    }
 }
 
 
