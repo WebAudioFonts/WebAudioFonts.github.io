@@ -1,10 +1,11 @@
 {
+  "type": "module",
   "scripts": {
     "build": "node scripts/build.js",
     "export": "node scripts/export.js"
   },
   "dependencies": {
-    "chokibasic": "^1.2.3",
+    "chokibasic": "^2.0.1",
     "highlight.js": "^11.11.1",
     "midi-audio-player": "^2.0.3"
   },

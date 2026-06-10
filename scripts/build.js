@@ -1,5 +1,7 @@
-const path = require("node:path");
-const { buildCSS, buildJS } = require("chokibasic");
+import path from "path";
+import { fileURLToPath } from 'url';
+import { buildCSS, buildJS } from "chokibasic";
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 
 const srcin = path.resolve(__dirname, "../src/");
